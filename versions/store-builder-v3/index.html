@@ -1,0 +1,106 @@
+<!doctype html>
+<!--
+  DISCOVERY WIRING — Store Builder — store-builder-v3 (the v7 prototype end to end; every step screen follows
+  the screen width (v2); the phone layout's “Add from phone” has the stand-in picker too (v3); frozen as
+  versions/store-builder-v3)
+  ---------------------------------------------------------
+  This file is the WIRING only — the hub + transition map. It holds NO screen content; the screens
+  live in screens/. This is the proto-FSM: the transition map below is what SSOT-1 (state machine)
+  and SSOT-5 (workflow) are derived from. HTML/CSS/vanilla JS only. Disposable. Not imported by
+  development/.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="screens/favicon.ico" />
+  <title>Store Builder — Discovery (wiring)</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem; max-width: 860px; color: #0d0f12; }
+    h1 { font-size: 1.3rem; }
+    h2 { font-size: 1rem; margin-top: 1.8rem; }
+    .note { color: #555; font-size: 0.86rem; }
+    a { color: #0b7534; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+    th, td { border: 1px solid #dde4e0; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+    th { background: #f4f7f5; }
+    code { background: #eef2ef; padding: 0 0.25rem; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Store Builder — Discovery Prototype (wiring hub)</h1>
+  <p class="note">Iteration goal: a distributor builds his FoodBridge store in about 10 minutes — on a computer or a phone —
+  without typing his customers, and sends it to FoodBridge's customer success team in one click.</p>
+
+  <h2>Screens</h2>
+  <p class="note">Every step screen follows the screen it is opened on, as the prototype does: 1000 px and wider, the
+  desktop layout; narrower, the phone layout at the same step. On a phone, Shop opens the welcome first.</p>
+  <ul>
+    <li><a href="screens/shop.html">Shop</a> — entry: mobile (required), GST, business type, warehouses</li>
+    <li><a href="screens/contacts.html">Contacts</a> — bring them in: phone QR (primary), iCloud, Tally/Excel list, paste</li>
+    <li><a href="screens/who-is-who.html">Who is who?</a> — mark each contact Customer / Supplier / Staff, or remove</li>
+    <li><a href="screens/daily-work.html">Daily work</a> — six yes/no and choice questions, a note (speak or type)</li>
+    <li><a href="screens/files.html">Files</a> — paper by the phone's camera, files by drag-and-drop, a voice note</li>
+    <li><a href="screens/send.html">Send</a> — the summary, what is still missing, Build my store</li>
+    <li><a href="screens/phone-handoff.html">Phone page from the QR</a> (<a href="screens/phone-handoff.html?photos">photo mode</a>) — on his phone; Contacts and Files open it for their live QR</li>
+    <li><a href="screens/sent-builds.html">What reached FoodBridge</a> — every build sent from this browser, its summary and files as they arrived</li>
+    <li><a href="screens/phone.html">The phone layout, held</a> — to see the phone layout on a computer</li>
+  </ul>
+  <p><a href="screens/shop.html"><strong>▶ Start the flow →</strong></a></p>
+
+  <h2>Transition map — screens (→ SSOT-5 workflow)</h2>
+  <table>
+    <thead><tr><th>From</th><th>Event</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>Shop</td><td>NEXT</td><td>Contacts</td></tr>
+      <tr><td>Contacts</td><td>CONTACTS_ARRIVED (phone QR · iCloud vCard · Tally/Excel list · paste)</td><td>Contacts (green “N contacts added”), then Who is who?</td></tr>
+      <tr><td>Contacts</td><td>NEXT with no contacts</td><td>Daily work</td></tr>
+      <tr><td>Who is who?</td><td>MARK (customer / supplier / staff) · REMOVE · UNDO</td><td>Who is who?</td></tr>
+      <tr><td>Who is who?</td><td>NEXT</td><td>Daily work</td></tr>
+      <tr><td>Daily work</td><td>NEXT</td><td>Files</td></tr>
+      <tr><td>Files</td><td>FILE_ADDED (drop · choose · phone photo) · VOICE_NOTE · REMOVE</td><td>Files</td></tr>
+      <tr><td>Files</td><td>NEXT</td><td>Send</td></tr>
+      <tr><td>Send</td><td>BUILD</td><td>Thank-you; the build is queued and delivered file by file (→ What reached FoodBridge)</td></tr>
+      <tr><td>any step</td><td>JUMP (steps column) · BACK</td><td>that step</td></tr>
+      <tr><td>Contacts / Files</td><td>SCAN (QR on the phone)</td><td>Phone page → sends to the computer under a one-time code</td></tr>
+      <tr><td>Phone page</td><td>PICK (contacts) · SNAP (photo)</td><td>they land on the open Contacts / Files screen; each read takes them (once)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Transition map — the store build (→ SSOT-1 state machine)</h2>
+  <table>
+    <thead><tr><th>State</th><th>Event</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td><code>drafting</code></td><td>EDIT (any answer, contact, file) · SAMPLE_FILL · START_AGAIN</td><td><code>drafting</code></td></tr>
+      <tr><td><code>drafting</code></td><td>BUILD</td><td><code>queued</code> (a snapshot: Excel + setup.json + every file)</td></tr>
+      <tr><td><code>queued</code></td><td>FILE_DELIVERED (one at a time; big files in pieces)</td><td><code>queued</code></td></tr>
+      <tr><td><code>queued</code></td><td>ALL_DELIVERED</td><td><code>delivered</code> — the team can open it</td></tr>
+      <tr><td><code>queued</code></td><td>OFFLINE / server down (5xx, network)</td><td><code>queued</code> — retried on the next chance</td></tr>
+      <tr><td><code>queued</code></td><td>REFUSED (4xx for one file)</td><td>that file dropped and named as missing; the rest go on</td></tr>
+      <tr><td><code>delivered</code></td><td>EDIT then BUILD again</td><td>a <em>new</em> build (builds are snapshots, never edited after sending)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Decisions this iteration carries (owner, 2026-09-26 … 10-01)</h2>
+  <table>
+    <tbody>
+      <tr><td>Steps</td><td>Shop · Contacts · Daily work · Files · Send. Products and Warehouse stock are <em>hidden, not deleted</em> (model.js <code>HIDDEN_STEPS</code>).</td></tr>
+      <tr><td>Contacts</td><td>One marking step (Customer / Supplier / Staff). Delivery days, areas, terms and staff jobs are hidden questions (<code>HIDDEN_ASKS</code>).</td></tr>
+      <tr><td>Files</td><td>Every file reaches the team <em>as it came</em> (<code>raw/</code>); over 2.5 MB it travels in pieces.</td></tr>
+      <tr><td>iPhone</td><td>Safari's one-time Contact Picker setting first; iCloud on the computer second.</td></tr>
+      <tr><td>Words</td><td>Titles only, no sub-text; one action per screen; Hindi and English.</td></tr>
+    </tbody>
+  </table>
+  <h2>How it runs with no server</h2>
+  <p class="note">The prototype files under <code>screens/prototype/</code> are byte-for-byte foodbridge-mock-platform
+  <code>v7/store-builder</code> @ <code>3c840e6</code>. Where it would call the bridge (<code>/api/stores</code>,
+  <code>/api/handoff</code>), a service worker — <a href="discovery-bridge.js">discovery-bridge.js</a> — answers instead and
+  keeps everything in this browser. No request leaves the browser. Serve over HTTP (a service worker does not run from
+  <code>file://</code>). Where the browser has no contact picker of its own (a computer), the phone layout's
+  “Add from phone” and the QR phone page get a stand-in that picks six invented contacts; Chrome on an Android
+  phone keeps its real one.</p>
+  <p class="note">Owner-side data: <a href="seed-data/seed.json">seed-data/seed.json</a> (the prototype's own sample answers;
+  in the prototype: “Try it with sample data”). The team's side is the customer-success module's own discovery.</p>
+</body>
+</html>

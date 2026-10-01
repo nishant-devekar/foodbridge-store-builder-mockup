@@ -1,0 +1,192 @@
+{
+ "_note": "Store Builder discovery v1 seed: the prototype’s own “Try it with sample data” answers (model.js fillSample over SAMPLE_STEPS) — what the owner side holds before Build my store.",
+ "answers": {
+  "v": 1,
+  "lang": "en",
+  "startedAt": null,
+  "updatedAt": null,
+  "store": {
+   "name": "",
+   "owner": "",
+   "mobile": "98200 11223",
+   "gst": "27AAPFG1234K1Z5",
+   "type": "distributor",
+   "typeOther": "",
+   "makes": null,
+   "photo": null,
+   "loc": null,
+   "address": "",
+   "godownAtShop": null,
+   "godowns": [],
+   "warehouses": 2,
+   "areas": []
+  },
+  "companies": {},
+  "customCompanies": [],
+  "items": {},
+  "customItems": {},
+  "people": {
+   "pmupc2fcei19x": {
+    "id": "pmupc2fcei19x",
+    "name": "Sharma Kirana",
+    "phone": "9820011001",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790847003182,
+    "area": "Kurla",
+    "days": [
+     "tue",
+     "fri"
+    ],
+    "pay": 15,
+    "big": true
+   },
+   "pmupc2fcea211": {
+    "id": "pmupc2fcea211",
+    "name": "Balaji Stores",
+    "phone": "9820011002",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790847003182,
+    "area": "Sion",
+    "days": [
+     "mon",
+     "thu"
+    ],
+    "pay": "cash"
+   },
+   "pmupc2fcev3pn": {
+    "id": "pmupc2fcev3pn",
+    "name": "Om Sai Provision",
+    "phone": "9820011003",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790847003182,
+    "area": "Kurla",
+    "days": [
+     "tue",
+     "fri"
+    ],
+    "pay": 7
+   },
+   "pmupc2fce6muq": {
+    "id": "pmupc2fce6muq",
+    "name": "New Ganesh Mart",
+    "phone": "9820011004",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790847003182,
+    "area": "Chembur",
+    "days": [
+     "wed",
+     "sat"
+    ],
+    "pay": "cash"
+   },
+   "pmupc2fce6vca": {
+    "id": "pmupc2fce6vca",
+    "name": "Patel General Store",
+    "phone": "9820011005",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790847003182,
+    "area": "Sion",
+    "days": [
+     "mon",
+     "thu"
+    ],
+    "pay": 15
+   },
+   "pmupc2fcejc9b": {
+    "id": "pmupc2fcejc9b",
+    "name": "Raju",
+    "phone": "9820011006",
+    "type": "staff",
+    "src": "typed",
+    "at": 1790847003182,
+    "role": "delivery",
+    "days": [
+     "mon",
+     "tue",
+     "wed",
+     "thu",
+     "fri",
+     "sat"
+    ],
+    "cash": true
+   },
+   "pmupc2fcel33m": {
+    "id": "pmupc2fcel33m",
+    "name": "Suresh",
+    "phone": "9820011007",
+    "type": "staff",
+    "src": "typed",
+    "at": 1790847003182,
+    "role": "salesman",
+    "days": [
+     "mon",
+     "tue",
+     "wed",
+     "thu",
+     "fri",
+     "sat"
+    ]
+   },
+   "pmupc2fcegr4o": {
+    "id": "pmupc2fcegr4o",
+    "name": "Parle Super Stockist",
+    "phone": "9820011008",
+    "type": "supplier",
+    "src": "typed",
+    "at": 1790847003182,
+    "companies": [
+     "parle"
+    ]
+   },
+   "pmupc2fce4ka3": {
+    "id": "pmupc2fce4ka3",
+    "name": "Metro Agencies",
+    "phone": "9820011009",
+    "type": "supplier",
+    "src": "typed",
+    "at": 1790847003182,
+    "companies": [
+     "nestle",
+     "hul"
+    ]
+   }
+  },
+  "order": [
+   "pmupc2fcei19x",
+   "pmupc2fcea211",
+   "pmupc2fcev3pn",
+   "pmupc2fce6muq",
+   "pmupc2fce6vca",
+   "pmupc2fcejc9b",
+   "pmupc2fcel33m",
+   "pmupc2fcegr4o",
+   "pmupc2fce4ka3"
+  ],
+  "usual": {},
+  "rules": {
+   "payMethods": [
+    "cash",
+    "upi",
+    "credit"
+   ],
+   "routes": true,
+   "selfOrder": false,
+   "partPay": true,
+   "returns": "credit",
+   "batches": null,
+   "morning": "money",
+   "note": "",
+   "payMethodsOther": "",
+   "returnsOther": "",
+   "morningOther": ""
+  },
+  "skipped": {},
+  "papers": [],
+  "stockSel": null
+ }
+}

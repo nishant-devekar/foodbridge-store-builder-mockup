@@ -1,0 +1,85 @@
+<!doctype html>
+<!--
+  DISCOVERY SCREEN — Store Builder — "What reached FoodBridge"
+  Standalone-openable. Not a screen the owner sees: it shows what the stand-in bridge
+  (../discovery-bridge.js) received when he pressed Build my store — the build's summary and every
+  file, as sent (pieced files rejoined, files still arriving marked). It is the hand-over point to
+  the customer-success module, which reads builds through SSOT-7 StoreBuildFeed; that module's own
+  discovery is separate and is not linked from here.
+  Outgoing transitions (proto-FSM, feed SSOT-1/-5):
+    - Build again → a new build, never an edit of this one  → send.html
+  HTML/CSS/vanilla JS only. Disposable. Informs the SSOTs, not imported by development/.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" />
+  <title>Store Builder — What reached FoodBridge</title>
+  <style>
+    html, body { margin: 0; font-family: system-ui, sans-serif; color: #0d0f12; }
+    body { background: #f4f7f5; min-height: 100vh; }
+    .bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 1px solid #e3e9e5; font-size: 13px; }
+    .bar b { font-size: 14px; }
+    .bar a, button.link { color: #0b7534; text-decoration: none; font-weight: 600; }
+    .bar .go { margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; }
+    button.link { background: none; border: 0; font: inherit; font-size: 13px; cursor: pointer; padding: 0; }
+    main { max-width: 760px; margin: 24px auto; padding: 0 16px; }
+    .empty { color: #5b6660; text-align: center; padding: 48px 0; }
+    .b { background: #fff; border: 1px solid #e3e9e5; border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+    .b h2 { margin: 0; font-size: 16px; }
+    .b .who { color: #5b6660; font-size: 13px; margin-top: 2px; }
+    .b .n { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+    .b .n span { background: #eef5f0; color: #0b7534; border-radius: 99px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+    .b ul { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+    .b li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid #f0f3f1; }
+    .b li a { color: #0b7534; word-break: break-all; }
+    .b li small { color: #5b6660; white-space: nowrap; }
+    .b .wait { color: #a15c00; font-size: 13px; margin-top: 8px; }
+    .b code { font-size: 11px; color: #5b6660; }
+    @media (max-width: 999px) {
+      .bar { flex-wrap: nowrap; overflow-x: auto; gap: 12px; padding: 8px 12px; font-size: 12px; white-space: nowrap; scrollbar-width: none; }
+      .bar::-webkit-scrollbar { display: none; }
+      .bar b { font-size: 12px; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; max-width: 52vw; }
+      .bar .go { margin-left: auto; flex-wrap: nowrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bar"><a href="../index.html">← Wiring hub</a><b>What reached FoodBridge</b><span class="go"><a href="send.html">Build again →</a> <button class="link" id="clear" type="button">Clear this browser’s builds</button></span></div>
+  <main id="list"><p class="empty">Loading…</p></main>
+  <script>
+    (function () {
+      "use strict";
+      var $ = document.getElementById("list");
+      function h(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+      function size(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB"; }
+      function when(iso) { var d = new Date(iso); return isNaN(d) ? "" : d.toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
+      function show() {
+        fetch("api/stores", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+          var s = d.stores || [];
+          if (!s.length) { $.innerHTML = '<p class="empty">Nothing yet. <a href="send.html">Build a store</a> and it lands here.</p>'; return; }
+          $.innerHTML = s.map(function (b) {
+            var m = b.meta || {}, c = m.counts || {};
+            var chips = [["customers", c.customers], ["suppliers", c.suppliers], ["staff", c.staff], ["photos", c.photos]]
+              .filter(function (x) { return x[1]; }).map(function (x) { return "<span>" + x[1] + " " + (x[1] === 1 && x[0] !== "staff" ? x[0].slice(0, -1) : x[0]) + "</span>"; }).join("");
+            return '<section class="b"><h2>' + h(m.shop || "No shop name") + "</h2>" +
+              '<div class="who">' + h([m.owner, m.mobile, m.gst].filter(Boolean).join(" · ")) + " · " + h(when(m.at)) + "</div>" +
+              (chips ? '<div class="n">' + chips + "</div>" : "") +
+              "<ul>" + b.files.map(function (f) {
+                return "<li><a href=\"api/stores?id=" + encodeURIComponent(b.id) + "&file=" + encodeURIComponent(f.name) + "\" download=\"" + h(f.name.split("/").pop()) + "\">" + h(f.name) + "</a><small>" + size(f.size) + (f.parts ? " · " + f.parts + " pieces" : "") + (f.partial ? " · arriving" : "") + "</small></li>";
+              }).join("") + "</ul>" +
+              (b.missing.length ? '<div class="wait">Still arriving: ' + h(b.missing.join(", ")) + "</div>" : "") +
+              "<code>" + h(b.id) + "</code></section>";
+          }).join("");
+        }).catch(function (e) { $.innerHTML = '<p class="empty">The stand-in bridge did not answer (' + h(e.message) + ").</p>"; });
+      }
+      document.addEventListener("bridge-ready", show);
+      document.getElementById("clear").onclick = function () {
+        caches.delete("store-builder-discovery-bridge").then(show);
+      };
+    })();
+  </script>
+  <script src="discovery.js"></script>
+</body>
+</html>
