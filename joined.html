@@ -2,12 +2,12 @@
 <!--
   DISCOVERY SCREEN — Foodbridge Module Store Builder (parent) — "Owner → team, joined"
   The two frozen submodule versions side by side, joined the way the product joins them: the owner
-  builds his store in store-builder-v3 (left); it reaches the team's ticketing-workspace-v1 (right)
+  builds his store in store-builder-v4 (left); it reaches the team's ticketing-workspace-v2 (right)
   as a New ticket, beside the three sample stores.
 
   The contract (parent SSOT-7, B3): the team side never reads store-builder's storage. It gets
   builds only through store-builder's own read — StoreBuildFeed (listBuilds, readFile) — which in
-  discovery is store-builder-v3's stand-in bridge (GET /api/stores, GET /api/stores?id=&file=),
+  discovery is store-builder-v4's stand-in bridge (GET /api/stores, GET /api/stores?id=&file=),
   called from a page in store-builder's own scope. An ACL here maps that into the panel's
   GET /api/stores and keeps the panel's own key gate: a wrong key is still refused.
 
@@ -55,8 +55,8 @@
   <div class="bar"><a id="hub" href="../index.html">← Wiring hub</a><b>Owner → team, joined</b><span class="key">Team key <code>fb-team-demo</code></span></div>
   <div class="tabs" role="tablist"><button class="on" data-pane="owner">Owner</button><button data-pane="team">Team <span class="new" id="newTab" hidden></span></button></div>
   <main>
-    <section class="pane on" id="owner"><h2><span>Owner</span> store-builder-v3</h2><iframe id="sb" title="Owner — Store Builder"></iframe></section>
-    <section class="pane" id="team"><h2><span>Team</span> ticketing-workspace-v1</h2><iframe id="cs" title="Team — ticketing workspace"></iframe></section>
+    <section class="pane on" id="owner"><h2><span>Owner</span> store-builder-v4</h2><iframe id="sb" title="Owner — Store Builder"></iframe></section>
+    <section class="pane" id="team"><h2><span>Team</span> ticketing-workspace-v2</h2><iframe id="cs" title="Team — ticketing workspace"></iframe></section>
   </main>
   <iframe id="feed" title="" aria-hidden="true" tabindex="-1"></iframe>
   <script>
@@ -64,8 +64,8 @@
       "use strict";
       /* Where the two frozen versions are: in the module repo (discovery/screens/) or the published copy (root). */
       var inRepo = /\/discovery\/screens\//.test(location.pathname);
-      var SB = inRepo ? "../../modules/store-builder/discovery/versions/store-builder-v3/" : "versions/store-builder-v3/";
-      var CS = inRepo ? "../../modules/customer-success/discovery/versions/ticketing-workspace-v1/" : "versions/ticketing-workspace-v1/";
+      var SB = inRepo ? "../../modules/store-builder/discovery/versions/store-builder-v4/" : "versions/store-builder-v4/";
+      var CS = inRepo ? "../../modules/customer-success/discovery/versions/ticketing-workspace-v2/" : "versions/ticketing-workspace-v2/";
       if (!inRepo) document.getElementById("hub").href = "index.html";
 
       var $sb = document.getElementById("sb"), $cs = document.getElementById("cs"), $feed = document.getElementById("feed");
@@ -99,10 +99,12 @@
         w.fetch = function (url, opts) {
           var u = String(url);
           if (!/\/api\/stores/.test(u)) return own.apply(w, arguments);
+          var q = new URL(u, w.location.href).searchParams, id = q.get("id"), file = q.get("file");
+          /* A joined build's file comes through the feed; the panel's own key check (on its list) still stands. */
+          if (id && file && liveIds[id]) return own.call(w, u.split("?")[0], opts).then(function (r) { return r.status === 401 ? r : Feed.readFile(id, file); });
           return own.call(w, url, opts).then(function (r) {
             if (!r.ok) return r;   // wrong or no key: the panel's own refusal stands
-            var q = new URL(u, w.location.href).searchParams, id = q.get("id"), file = q.get("file");
-            if (id && file) return liveIds[id] ? Feed.readFile(id, file) : r;
+            if (id && file) return r;
             return r.json().then(function (seed) {
               return Feed.listBuilds().then(function (live) {
                 live.forEach(function (s) { liveIds[s.id] = true; });

@@ -1,0 +1,38 @@
+<!doctype html>
+<!--
+  DISCOVERY SCREEN — Store Builder — "Files — “Anything else that helps?”"
+  Standalone-openable. Embeds the v7 prototype (prototype/ — desktop layout at 1000 px and wider, the phone layout under it; copied from foodbridge-mock-platform
+  v7/store-builder @ 3c840e6) at this step. Also reachable from the wiring hub (../index.html).
+  Outgoing transitions (proto-FSM, feed SSOT-1/-5):
+    - Next: Send  → send.html
+    - Snap paper with the phone → photo page  → phone-handoff.html?photos
+  HTML/CSS/vanilla JS only. Disposable. Informs the SSOTs, not imported by development/.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" />
+  <title>Store Builder — Files</title>
+  <style>
+    html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; }
+    body { display: flex; flex-direction: column; background: #f4f7f5; }
+    .bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 1px solid #e3e9e5; font-size: 13px; }
+    .bar b { font-size: 14px; }
+    .bar a { color: #0b7534; text-decoration: none; font-weight: 600; }
+    .bar .go { margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; }
+    iframe { flex: 1; width: 100%; margin: 0 auto; border: 0; background: #fff; }
+    @media (max-width: 999px) {
+      .bar { flex-wrap: nowrap; overflow-x: auto; gap: 12px; padding: 8px 12px; font-size: 12px; white-space: nowrap; scrollbar-width: none; }
+      .bar::-webkit-scrollbar { display: none; }
+      .bar b { font-size: 12px; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; max-width: 52vw; }
+      .bar .go { margin-left: auto; flex-wrap: nowrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bar"><a href="../index.html">← Wiring hub</a><b>Files — “Anything else that helps?”</b><span class="go"><a id="phone-link" target="_blank" hidden>Open the phone page for this QR ↗</a> <a href="send.html">Next: Send →</a></span></div>
+  <iframe data-src="prototype/index.html#files" data-phone="#finish" title="Files"></iframe>
+  <script src="discovery.js"></script>
+</body>
+</html>

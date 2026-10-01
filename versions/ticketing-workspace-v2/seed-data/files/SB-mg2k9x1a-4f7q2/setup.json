@@ -1,0 +1,216 @@
+{
+ "kind": "foodbridge-store-builder",
+ "v": 1,
+ "catalogue": "2026-09-26e",
+ "at": "2026-10-01T05:00:00.000Z",
+ "state": {
+  "v": 1,
+  "lang": "en",
+  "startedAt": 1790829600000,
+  "updatedAt": null,
+  "store": {
+   "name": "Vasu Foods",
+   "owner": "Vikram",
+   "mobile": "98200 11223",
+   "gst": "27AAPFG1234K1Z5",
+   "type": "distributor",
+   "typeOther": "",
+   "makes": null,
+   "photo": null,
+   "loc": null,
+   "address": "",
+   "godownAtShop": null,
+   "godowns": [],
+   "warehouses": 2,
+   "areas": []
+  },
+  "companies": {},
+  "customCompanies": [],
+  "items": {},
+  "customItems": {},
+  "people": {
+   "pmupfgbbp6bnz": {
+    "id": "pmupfgbbp6bnz",
+    "name": "Sharma Kirana",
+    "phone": "9820011001",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790852690005,
+    "area": "Kurla",
+    "days": [
+     "tue",
+     "fri"
+    ],
+    "pay": 15,
+    "big": true
+   },
+   "pmupfgbbpeks2": {
+    "id": "pmupfgbbpeks2",
+    "name": "Balaji Stores",
+    "phone": "9820011002",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790852690005,
+    "area": "Sion",
+    "days": [
+     "mon",
+     "thu"
+    ],
+    "pay": "cash"
+   },
+   "pmupfgbbpsc5n": {
+    "id": "pmupfgbbpsc5n",
+    "name": "Om Sai Provision",
+    "phone": "9820011003",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790852690005,
+    "area": "Kurla",
+    "days": [
+     "tue",
+     "fri"
+    ],
+    "pay": 7
+   },
+   "pmupfgbbplw8v": {
+    "id": "pmupfgbbplw8v",
+    "name": "New Ganesh Mart",
+    "phone": "9820011004",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790852690005,
+    "area": "Chembur",
+    "days": [
+     "wed",
+     "sat"
+    ],
+    "pay": "cash"
+   },
+   "pmupfgbbp8ess": {
+    "id": "pmupfgbbp8ess",
+    "name": "Patel General Store",
+    "phone": "9820011005",
+    "type": "shop",
+    "src": "typed",
+    "at": 1790852690005,
+    "area": "Sion",
+    "days": [
+     "mon",
+     "thu"
+    ],
+    "pay": 15
+   },
+   "pmupfgbbpa03x": {
+    "id": "pmupfgbbpa03x",
+    "name": "Raju",
+    "phone": "9820011006",
+    "type": "staff",
+    "src": "typed",
+    "at": 1790852690005,
+    "role": "delivery",
+    "days": [
+     "mon",
+     "tue",
+     "wed",
+     "thu",
+     "fri",
+     "sat"
+    ],
+    "cash": true
+   },
+   "pmupfgbbp9aaj": {
+    "id": "pmupfgbbp9aaj",
+    "name": "Suresh",
+    "phone": "9820011007",
+    "type": "staff",
+    "src": "typed",
+    "at": 1790852690005,
+    "role": "salesman",
+    "days": [
+     "mon",
+     "tue",
+     "wed",
+     "thu",
+     "fri",
+     "sat"
+    ]
+   },
+   "pmupfgbbp6njd": {
+    "id": "pmupfgbbp6njd",
+    "name": "Parle Super Stockist",
+    "phone": "9820011008",
+    "type": "supplier",
+    "src": "typed",
+    "at": 1790852690005,
+    "companies": [
+     "parle"
+    ]
+   },
+   "pmupfgbbpjoif": {
+    "id": "pmupfgbbpjoif",
+    "name": "Metro Agencies",
+    "phone": "9820011009",
+    "type": "supplier",
+    "src": "typed",
+    "at": 1790852690005,
+    "companies": [
+     "nestle",
+     "hul"
+    ]
+   }
+  },
+  "order": [
+   "pmupfgbbp6bnz",
+   "pmupfgbbpeks2",
+   "pmupfgbbpsc5n",
+   "pmupfgbbplw8v",
+   "pmupfgbbp8ess",
+   "pmupfgbbpa03x",
+   "pmupfgbbp9aaj",
+   "pmupfgbbp6njd",
+   "pmupfgbbpjoif"
+  ],
+  "usual": {},
+  "rules": {
+   "payMethods": [
+    "cash",
+    "upi",
+    "credit"
+   ],
+   "routes": true,
+   "selfOrder": false,
+   "partPay": true,
+   "returns": "credit",
+   "batches": null,
+   "morning": "money",
+   "note": "",
+   "payMethodsOther": "",
+   "returnsOther": "",
+   "morningOther": ""
+  },
+  "skipped": {},
+  "papers": [
+   {
+    "id": "flmupfgbc46mg0",
+    "kind": "file",
+    "file": "raw/Route-chart-Monday.jpg",
+    "name": "Route chart Monday.jpg",
+    "mime": "image/jpeg",
+    "size": 67705,
+    "step": "files",
+    "at": 1790852690020
+   },
+   {
+    "id": "flmupfgbc4nqcf",
+    "kind": "file",
+    "file": "raw/Rate-list-Oct.pdf",
+    "name": "Rate list Oct.pdf",
+    "mime": "application/pdf",
+    "size": 3142484,
+    "step": "files",
+    "at": 1790852690020
+   }
+  ],
+  "stockSel": null
+ }
+}
