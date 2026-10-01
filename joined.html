@@ -1,0 +1,155 @@
+<!doctype html>
+<!--
+  DISCOVERY SCREEN — Foodbridge Module Store Builder (parent) — "Owner → team, joined"
+  The two frozen submodule versions side by side, joined the way the product joins them: the owner
+  builds his store in store-builder-v3 (left); it reaches the team's ticketing-workspace-v1 (right)
+  as a New ticket, beside the three sample stores.
+
+  The contract (parent SSOT-7, B3): the team side never reads store-builder's storage. It gets
+  builds only through store-builder's own read — StoreBuildFeed (listBuilds, readFile) — which in
+  discovery is store-builder-v3's stand-in bridge (GET /api/stores, GET /api/stores?id=&file=),
+  called from a page in store-builder's own scope. An ACL here maps that into the panel's
+  GET /api/stores and keeps the panel's own key gate: a wrong key is still refused.
+
+  Neither frozen version is edited: this page wraps the panel's fetch from outside (same origin).
+  Outgoing transitions (proto-FSM, feed parent SSOT-5):
+    - store-builder · Build my store → a New ticket on the right (refreshed when the feed changes)
+    - ticketing · DOWNLOAD           → the owner's file, as he sent it, read through the feed
+  HTML/CSS/vanilla JS only. Disposable. Not imported by development/.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:," />
+  <title>Store Builder — owner and team, joined</title>
+  <style>
+    :root { color-scheme: light; --line: #e3e9e5; --green: #0b7534; --muted: #5b6660; }
+    html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; color: #0d0f12; background: #f4f7f5; }
+    body { display: flex; flex-direction: column; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .bar b { font-size: 14px; }
+    .bar a { color: var(--green); text-decoration: none; font-weight: 600; }
+    .bar .key { margin-left: auto; color: var(--muted); }
+    .bar code { background: #eef2ef; padding: 1px 5px; border-radius: 4px; color: #0d0f12; }
+    .tabs { display: none; }
+    main { flex: 1; display: grid; grid-template-columns: minmax(380px, 42%) 1fr; gap: 12px; padding: 12px; min-height: 0; }
+    .pane { display: flex; flex-direction: column; min-height: 0; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .pane h2 { margin: 0; padding: 8px 12px; font-size: 12px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--line); display: flex; gap: 8px; align-items: center; }
+    .pane h2 span { color: #0d0f12; }
+    .pane iframe { flex: 1; width: 100%; border: 0; }
+    .new { background: var(--green); color: #fff; border-radius: 99px; padding: 0 7px; font-size: 11px; line-height: 18px; }
+    .new[hidden] { display: none; }
+    #feed { position: absolute; width: 1px; height: 1px; border: 0; left: -10px; top: -10px; }
+    @media (max-width: 899px) {
+      .bar .key { margin-left: 0; }
+      .tabs { display: flex; gap: 6px; padding: 8px 12px 0; }
+      .tabs button { flex: 1; font: inherit; font-size: 14px; font-weight: 600; padding: 9px; border-radius: 10px; border: 1px solid var(--line); background: #fff; color: #0d0f12; }
+      .tabs button.on { background: #0d0f12; color: #fff; border-color: #0d0f12; }
+      main { grid-template-columns: 1fr; padding: 8px 12px 12px; }
+      .pane:not(.on) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bar"><a id="hub" href="../index.html">← Wiring hub</a><b>Owner → team, joined</b><span class="key">Team key <code>fb-team-demo</code></span></div>
+  <div class="tabs" role="tablist"><button class="on" data-pane="owner">Owner</button><button data-pane="team">Team <span class="new" id="newTab" hidden></span></button></div>
+  <main>
+    <section class="pane on" id="owner"><h2><span>Owner</span> store-builder-v3</h2><iframe id="sb" title="Owner — Store Builder"></iframe></section>
+    <section class="pane" id="team"><h2><span>Team</span> ticketing-workspace-v1</h2><iframe id="cs" title="Team — ticketing workspace"></iframe></section>
+  </main>
+  <iframe id="feed" title="" aria-hidden="true" tabindex="-1"></iframe>
+  <script>
+    (function () {
+      "use strict";
+      /* Where the two frozen versions are: in the module repo (discovery/screens/) or the published copy (root). */
+      var inRepo = /\/discovery\/screens\//.test(location.pathname);
+      var SB = inRepo ? "../../modules/store-builder/discovery/versions/store-builder-v3/" : "versions/store-builder-v3/";
+      var CS = inRepo ? "../../modules/customer-success/discovery/versions/ticketing-workspace-v1/" : "versions/ticketing-workspace-v1/";
+      if (!inRepo) document.getElementById("hub").href = "index.html";
+
+      var $sb = document.getElementById("sb"), $cs = document.getElementById("cs"), $feed = document.getElementById("feed");
+
+      /* ── StoreBuildFeed: store-builder's read, called from a page in store-builder's own scope ── */
+      var FEED = new URL(SB + "screens/api/stores", location.href).href;
+      var feedReady = new Promise(function (ok) {
+        $feed.addEventListener("load", function wait() {
+          var w = $feed.contentWindow;
+          (function poll() { if (w.navigator.serviceWorker && w.navigator.serviceWorker.controller) ok(w); else setTimeout(poll, 150); })();
+        }, { once: true });
+      });
+      var Feed = {
+        listBuilds: function () {
+          return feedReady.then(function (w) { return w.fetch(FEED, { cache: "no-store" }); })
+            .then(function (r) { return r.json(); }).then(function (j) { return j.stores || []; });
+        },
+        readFile: function (id, file) {
+          return feedReady.then(function (w) { return w.fetch(FEED + "?id=" + encodeURIComponent(id) + "&file=" + encodeURIComponent(file)); });
+        },
+      };
+
+      /* ── ACL: the team panel's GET /api/stores = its own answer (the key gate, the sample stores)
+             + the builds from the feed. Its tickets stay its own: a build it has not seen is New. ── */
+      var liveIds = {};
+      function join() {
+        var w = $cs.contentWindow;
+        if (!w || w.__joined || !w.fetch) return;
+        var own = w.fetch;
+        w.__joined = true;
+        w.fetch = function (url, opts) {
+          var u = String(url);
+          if (!/\/api\/stores/.test(u)) return own.apply(w, arguments);
+          return own.call(w, url, opts).then(function (r) {
+            if (!r.ok) return r;   // wrong or no key: the panel's own refusal stands
+            var q = new URL(u, w.location.href).searchParams, id = q.get("id"), file = q.get("file");
+            if (id && file) return liveIds[id] ? Feed.readFile(id, file) : r;
+            return r.json().then(function (seed) {
+              return Feed.listBuilds().then(function (live) {
+                live.forEach(function (s) { liveIds[s.id] = true; });
+                return new Response(JSON.stringify(Object.assign({}, seed, { stores: live.concat(seed.stores || []) })),
+                  { status: 200, headers: { "Content-Type": "application/json" } });
+              });
+            });
+          });
+        };
+        refreshTeam();
+      }
+      function refreshTeam() {
+        var d = $cs.contentDocument, b = d && d.getElementById("refresh"), k = d && d.getElementById("keyForm");
+        if (b && k && k.hidden) b.click();
+      }
+      $cs.addEventListener("load", join);
+
+      /* When a build lands or a file arrives, the team's list refreshes; on a phone the Team tab counts it. */
+      var seen = null, fresh = 0;
+      function sig(list) { return list.map(function (s) { return s.id + ":" + s.files.length + ":" + s.missing.length; }).join("|"); }
+      function watch() {
+        Feed.listBuilds().then(function (list) {
+          var now = sig(list);
+          if (seen !== null && now !== seen) {
+            fresh += Math.max(0, list.length - seen.split("|").filter(Boolean).length);
+            refreshTeam();
+            var t = document.getElementById("newTab");
+            if (fresh && !document.getElementById("team").classList.contains("on")) { t.textContent = fresh + " new"; t.hidden = false; }
+          }
+          seen = now;
+        }).catch(function () {}).then(function () { setTimeout(watch, 2500); });
+      }
+
+      /* Phone: one pane at a time. */
+      document.querySelector(".tabs").addEventListener("click", function (e) {
+        var b = e.target.closest("button[data-pane]");
+        if (!b) return;
+        document.querySelectorAll(".tabs button").forEach(function (x) { x.classList.toggle("on", x === b); });
+        document.querySelectorAll(".pane").forEach(function (p) { p.classList.toggle("on", p.id === b.dataset.pane); });
+        if (b.dataset.pane === "team") { fresh = 0; document.getElementById("newTab").hidden = true; }
+      });
+
+      $feed.src = SB + "screens/sent-builds.html";
+      $sb.src = SB + "screens/shop.html";
+      $cs.src = CS + "screens/built-stores.html";
+      feedReady.then(watch);
+    })();
+  </script>
+</body>
+</html>

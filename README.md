@@ -2,6 +2,10 @@
 
 Published copies of the Store Builder module's frozen discovery versions, served by GitHub Pages:
 
+Joined (both versions side by side, a build arriving as a New ticket through Store Builder's contract):
+<https://nishant-devekar.github.io/foodbridge-store-builder-mockup/joined.html> — from the source repo's
+`discovery/screens/joined.html` (parent addendum-004).
+
 | Version | Live | What |
 | --- | --- | --- |
 | `store-builder-v3` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/store-builder-v3/index.html> | the owner's flow, desktop and phone, end to end; each screen follows the screen; a stand-in contact picker on a computer |
