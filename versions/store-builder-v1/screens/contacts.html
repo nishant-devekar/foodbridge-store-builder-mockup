@@ -1,0 +1,33 @@
+<!doctype html>
+<!--
+  DISCOVERY SCREEN — Store Builder — "Contacts — “Who do you work with?”"
+  Standalone-openable. Embeds the v7 prototype (prototype/, copied from foodbridge-mock-platform
+  v7/store-builder @ 3c840e6) at this step. Also reachable from the wiring hub (../index.html).
+  Outgoing transitions (proto-FSM, feed SSOT-1/-5):
+    - Contacts arrive (QR / iCloud / list / paste)  → who-is-who.html
+    - Scan the QR → phone page  → phone-handoff.html
+    - Next with none: Daily work  → daily-work.html
+  HTML/CSS/vanilla JS only. Disposable. Informs the SSOTs, not imported by development/.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" />
+  <title>Store Builder — Contacts</title>
+  <style>
+    html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; }
+    body { display: flex; flex-direction: column; background: #f4f7f5; }
+    .bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 1px solid #e3e9e5; font-size: 13px; }
+    .bar b { font-size: 14px; }
+    .bar a { color: #0b7534; text-decoration: none; font-weight: 600; }
+    .bar .go { margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; }
+    iframe { flex: 1; width: 100%; margin: 0 auto; border: 0; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="bar"><a href="../index.html">← Wiring hub</a><b>Contacts — “Who do you work with?”</b><span class="go"><a id="phone-link" target="_blank" hidden>Open the phone page for this QR ↗</a> <a href="who-is-who.html">Contacts arrive (QR / iCloud / list / paste) →</a> <a href="daily-work.html">Next with none: Daily work →</a></span></div>
+  <iframe data-src="prototype/index.html?view=desktop#people.add" title="Contacts"></iframe>
+  <script src="discovery.js"></script>
+</body>
+</html>

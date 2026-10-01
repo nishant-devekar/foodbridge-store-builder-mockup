@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="versions/store-builder-v1/screens/favicon.ico" />
+  <title>Store Builder — Discovery</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem 16px; max-width: 760px; margin: 0 auto; color: #0d0f12; background: #fff; }
+    h1 { font-size: 1.35rem; margin-bottom: .3rem; }
+    .note { color: #555; font-size: .9rem; }
+    a { color: #0b7534; }
+    .v { border: 1px solid #dde4e0; border-radius: 12px; padding: 16px 18px; margin: 16px 0; }
+    .v h2 { margin: 0 0 4px; font-size: 1.05rem; }
+    .v p { margin: 6px 0; font-size: .92rem; }
+    code { background: #eef2ef; padding: 0 .25rem; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Store Builder — discovery</h1>
+  <p class="note">Two frozen discovery versions of the FoodBridge Store Builder module. Each stands on its own:
+  no server, no real API call, invented data. In the product they share one database, and the team reads
+  builds through Store Builder's published contract, never its tables.</p>
+
+  <section class="v">
+    <h2><a href="versions/store-builder-v1/index.html">store-builder-v1</a></h2>
+    <p>The owner builds his store on a computer or a phone: Shop · Contacts · Who is who · Daily work · Files · Send.
+    The phone QR, Build my store and “What reached FoodBridge” all work in this browser.</p>
+    <p class="note">On the Contacts and Files screens, use “Open the phone page for this QR”. Each browser keeps its own
+    builds, so a real phone scanning the QR is not part of this demo.</p>
+  </section>
+
+  <section class="v">
+    <h2><a href="versions/ticketing-workspace-v1/index.html">ticketing-workspace-v1</a></h2>
+    <p>The customer success team: every store built, its files, and a ticket per store — New → In review → Set up.</p>
+    <p class="note">Team key: <code>fb-team-demo</code>. Runs on three sample stores.</p>
+  </section>
+
+  <p class="note">Source: <code>exagon-ai/foodbridge-module-store-builder</code> (private),
+  <code>modules/*/discovery/versions/</code>. Frozen 2026-10-01; do not edit here.</p>
+</body>
+</html>

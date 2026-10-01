@@ -1,0 +1,168 @@
+{
+ "_note": "Customer Success discovery v1 seed: built stores exactly as GET /api/stores returns them to the team panel (v7/stores.html) — newest first. Names and numbers are invented. v2 adds `tickets`: the team's own status per store (customer-success owns these, not store-builder).",
+ "store": "blob",
+ "stores": [
+  {
+   "id": "SB-mg2k9x1a-4f7q2",
+   "meta": {
+    "id": "SB-mg2k9x1a-4f7q2",
+    "at": "2026-10-01T05:00:00.000Z",
+    "shop": "Vasu Foods",
+    "owner": "Vikram",
+    "mobile": "98200 11223",
+    "gst": "27AAPFG1234K1Z5",
+    "type": "distributor",
+    "typeOther": "",
+    "lang": "en",
+    "version": "store-builder 1",
+    "counts": {
+     "products": 0,
+     "customers": 5,
+     "suppliers": 2,
+     "staff": 2,
+     "counted": 0,
+     "answered": 6,
+     "photos": 0,
+     "gaps": 0
+    },
+    "files": [
+     "Store Builder.xlsx",
+     "setup.json",
+     "raw/Route chart Monday.jpg",
+     "raw/Rate list Oct.pdf"
+    ],
+    "received": "2026-10-01T05:00:00.000Z"
+   },
+   "files": [
+    {
+     "name": "Store Builder.xlsx",
+     "size": 18432
+    },
+    {
+     "name": "setup.json",
+     "size": 9216
+    },
+    {
+     "name": "raw/Route chart Monday.jpg",
+     "size": 412000
+    },
+    {
+     "name": "raw/Rate list Oct.pdf",
+     "size": 6100000,
+     "parts": 3
+    }
+   ],
+   "missing": []
+  },
+  {
+   "id": "SB-mg1z0c4b-8h2k1",
+   "meta": {
+    "id": "SB-mg1z0c4b-8h2k1",
+    "at": "2026-09-30T17:05:00.000Z",
+    "received": "2026-09-30T17:06:10.000Z",
+    "shop": "Shree Ganesh Traders",
+    "owner": "Ramesh",
+    "mobile": "9876500012",
+    "gst": "27AAACG1234F1Z5",
+    "type": "Wholesaler",
+    "counts": {
+     "products": 0,
+     "customers": 42,
+     "suppliers": 6,
+     "staff": 3,
+     "counted": 0,
+     "answered": 6,
+     "photos": 2,
+     "gaps": 2
+    },
+    "files": [
+     "Store Builder.xlsx",
+     "setup.json",
+     "photos/p1.jpg",
+     "photos/p2.jpg",
+     "voice/v1.webm"
+    ],
+    "lang": "hi"
+   },
+   "files": [
+    {
+     "name": "Store Builder.xlsx",
+     "size": 21504
+    },
+    {
+     "name": "setup.json",
+     "size": 11264
+    },
+    {
+     "name": "photos/p1.jpg",
+     "size": 180000
+    },
+    {
+     "name": "photos/p2.jpg",
+     "size": 175000
+    },
+    {
+     "name": "voice/v1.webm",
+     "size": 64000
+    }
+   ],
+   "missing": []
+  },
+  {
+   "id": "SB-mg0y7d2e-1q9w3",
+   "meta": {
+    "id": "SB-mg0y7d2e-1q9w3",
+    "at": "2026-09-29T11:40:00.000Z",
+    "received": "2026-09-29T11:41:00.000Z",
+    "shop": "",
+    "owner": "",
+    "mobile": "9123400001",
+    "gst": "",
+    "type": "Retailer",
+    "counts": {
+     "products": 0,
+     "customers": 0,
+     "suppliers": 0,
+     "staff": 0,
+     "counted": 0,
+     "answered": 2,
+     "photos": 0,
+     "gaps": 5
+    },
+    "files": [
+     "Store Builder.xlsx",
+     "setup.json",
+     "raw/Khata page 1.jpg"
+    ],
+    "lang": "en"
+   },
+   "files": [
+    {
+     "name": "Store Builder.xlsx",
+     "size": 9800
+    },
+    {
+     "name": "setup.json",
+     "size": 4100
+    }
+   ],
+   "missing": [
+    "raw/Khata page 1.jpg"
+   ]
+  }
+ ],
+ "tickets": {
+  "SB-mg2k9x1a-4f7q2": {
+   "status": "new",
+   "since": "2026-10-01T05:00:00.000Z"
+  },
+  "SB-mg1z0c4b-8h2k1": {
+   "status": "setUp",
+   "since": "2026-10-01T04:15:00.000Z"
+  },
+  "SB-mg0y7d2e-1q9w3": {
+   "status": "new",
+   "since": "2026-09-29T11:41:00.000Z"
+  }
+ }
+}

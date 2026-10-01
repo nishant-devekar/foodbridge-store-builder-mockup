@@ -1,0 +1,31 @@
+<!doctype html>
+<!--
+  DISCOVERY SCREEN — Store Builder — "The phone layout of the same flow (narrow screens)"
+  Standalone-openable. Embeds the v7 prototype (prototype/, copied from foodbridge-mock-platform
+  v7/store-builder @ 3c840e6) at this step. Also reachable from the wiring hub (../index.html).
+  Outgoing transitions (proto-FSM, feed SSOT-1/-5):
+    - (none — a layout variant of the same flow)
+  HTML/CSS/vanilla JS only. Disposable. Informs the SSOTs, not imported by development/.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" />
+  <title>Store Builder — The phone layout of the same flow (narrow screens)</title>
+  <style>
+    html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; }
+    body { display: flex; flex-direction: column; background: #f4f7f5; }
+    .bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 1px solid #e3e9e5; font-size: 13px; }
+    .bar b { font-size: 14px; }
+    .bar a { color: #0b7534; text-decoration: none; font-weight: 600; }
+    .bar .go { margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; }
+    iframe { flex: 1; width: 390px; margin: 0 auto; border: 0; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="bar"><a href="../index.html">← Wiring hub</a><b>The phone layout of the same flow (narrow screens)</b><span class="go"></span></div>
+  <iframe data-src="prototype/index.html?view=phone" title="The phone layout of the same flow (narrow screens)"></iframe>
+  <script src="discovery.js"></script>
+</body>
+</html>
