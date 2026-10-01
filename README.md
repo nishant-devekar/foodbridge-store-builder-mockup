@@ -1,10 +1,11 @@
 # foodbridge-store-builder-mockup
 
-Published copies of the Store Builder module's two frozen discovery versions, served by GitHub Pages:
+Published copies of the Store Builder module's frozen discovery versions, served by GitHub Pages:
 
 | Version | Live | What |
 | --- | --- | --- |
-| `store-builder-v1` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/store-builder-v1/index.html> | the owner's flow, desktop and phone, end to end |
+| `store-builder-v2` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/store-builder-v2/index.html> | the owner's flow, desktop and phone, end to end; each screen follows the screen it is opened on |
+| `store-builder-v1` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/store-builder-v1/index.html> | superseded by v2: its step screens held the desktop layout on a phone |
 | `ticketing-workspace-v1` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/ticketing-workspace-v1/index.html> | the customer success team's panel, a ticket per store (key `fb-team-demo`) |
 
 HTML/CSS/JS only, no server, no real API call, invented data. Each version folder is a byte-for-byte copy of
