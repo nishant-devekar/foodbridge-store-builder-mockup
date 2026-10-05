@@ -1,0 +1,65 @@
+{
+ "_comment": "Assistant discovery seed (5 Oct 2026). demoContacts: the stand-in contact picker's contacts — the same fourteen invented names the service worker gives the phone page (discovery-bridge.js DEMO_CONTACTS). Every name and number is made up.",
+ "demoContacts": [
+  {
+   "name": "Gupta Kirana Store",
+   "phone": "+91 98765 00011"
+  },
+  {
+   "name": "Shree Ganesh Kirana",
+   "phone": "98765 00012"
+  },
+  {
+   "name": "Balaji General Stores",
+   "phone": "098765 00013"
+  },
+  {
+   "name": "Om Sai Provision",
+   "phone": "9876500014"
+  },
+  {
+   "name": "New Punjab Mart",
+   "phone": "98765 00015"
+  },
+  {
+   "name": "Haveli Dhaba",
+   "phone": "98765 00016"
+  },
+  {
+   "name": "Sethi Sweets",
+   "phone": "98765 00017"
+  },
+  {
+   "name": "Laxmi Agencies",
+   "phone": "98765 00018"
+  },
+  {
+   "name": "Metro Distributors",
+   "phone": "98765 00019"
+  },
+  {
+   "name": "Raju Driver",
+   "phone": "98765 00020"
+  },
+  {
+   "name": "Suresh Salesman",
+   "phone": "98765 00021"
+  },
+  {
+   "name": "Pinky Didi",
+   "phone": "98765 00022"
+  },
+  {
+   "name": "Mukesh Bhai",
+   "phone": "98765 00023"
+  },
+  {
+   "name": "Dr. Arora",
+   "phone": "98765 00024"
+  }
+ ],
+ "samples": {
+  "rateList": "samples/sharma-agencies-rate-list.csv — a distributor's rate list: 14 rows, 11 in the catalogue, 3 new, 1 without a rate"
+ },
+ "towerSnapshot": "tower-snapshot.json — the Vasu Foods Control Tower as foodbridge-mock-platform v7 @2a7ead3 drew it on 5 Oct 2026"
+}
