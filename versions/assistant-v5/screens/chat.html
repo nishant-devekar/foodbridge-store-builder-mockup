@@ -1,0 +1,39 @@
+<!doctype html>
+<!--
+  DISCOVERY SCREEN — Assistant — "The assistant, on a page of its own: it opens on hi"
+  Standalone-openable; also reached from the wiring hub (../index.html).
+  The owner's flow (voice note, 5 Oct 2026): hi → Onboarding → name, mobile → contacts (address book on a
+  phone, QR on a computer) → who is who → the business questions (radio list, dropdown) → how the day
+  runs → products from any file (Claude; a stand-in here) → papers → the store, summed up → Create my
+  store (to the FoodBridge team) → what next: an order, tomorrow's order, a collection request, a campaign.
+  Outgoing transitions (proto-FSM, feed SSOT-1/-5): see the hub's transition map.
+    - Create an order / Order for tomorrow / Collection request → the Vasu Foods demo (mock-platform v7), new tab
+    - ⋯ → What reached FoodBridge → sent.html
+  ?device=phone|desktop pins the layout of the contacts card; ?vasu=<url> points the next actions at another v7.
+  HTML/CSS/vanilla JS only. Disposable. Informs the SSOTs, not imported by development/.
+-->
+<html lang="en" class="as-page" data-mode="page">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#008069" />
+  <link rel="icon" href="favicon.ico" />
+  <title>FoodBridge Assistant</title>
+  <link rel="stylesheet" href="chat/shell.css" />
+  <link rel="stylesheet" href="chat/widgets.css" />
+  <link rel="stylesheet" href="chat/desk.css" />
+</head>
+<body>
+  <script src="sb/catalogue.js"></script>
+  <script src="sb/model.js"></script>
+  <script src="sb/export.js"></script>
+  <script src="sb/import.js"></script>
+  <script src="sb/outbox.js"></script>
+  <script src="sb/vendor/qrcode.js"></script>
+  <script src="chat/tower-brain.js"></script>
+  <script src="chat/onboard.js"></script>
+  <script src="feedback.js"></script>
+  <script src="chat/app.js"></script>
+  <script src="boot.js"></script>
+</body>
+</html>
