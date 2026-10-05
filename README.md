@@ -8,6 +8,7 @@ Joined (both versions side by side, a build arriving as a New ticket through Sto
 
 | Version | Live | What |
 | --- | --- | --- |
+| `assistant-v6` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/assistant-v6/screens/chat.html> | **for the owner's review** (5 Oct 2026): mobile then shop name, multi-select answers, "anything else?" after each section, every message one line, stops at the store request; *Give feedback* tagged `assistant-v6` |
 | `assistant-v5` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/assistant-v5/screens/chat.html> | **the FoodBridge Assistant** (module `assistant`, 5 Oct 2026): Store Builder as a WhatsApp-style chat, WhatsApp Web on a computer; *Give feedback* posts to the FoodBridge feedback store — the only call that leaves the browser. Its links to `../../instructions/` are plain text here (that repo is private) |
 | `store-builder-v4` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/store-builder-v4/index.html> | the owner's flow, desktop and phone, end to end, as the mock-platform: the bridge's own rules, a FoodBridge online / down switch, iPhones as the real page |
 | `store-builder-v3` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/store-builder-v3/index.html> | superseded by v4: the stand-in picker hid the iPhone setting; no “down” state |
