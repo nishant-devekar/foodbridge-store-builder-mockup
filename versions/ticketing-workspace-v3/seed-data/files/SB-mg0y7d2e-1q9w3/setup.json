@@ -1,0 +1,57 @@
+{
+ "kind": "foodbridge-chat-app",
+ "v": 1,
+ "catalogue": "2026-09-26e",
+ "at": "2026-09-29T11:40:00.000Z",
+ "state": {
+  "v": 1,
+  "lang": "en",
+  "startedAt": 1790681400000,
+  "updatedAt": null,
+  "store": {
+   "name": "",
+   "owner": "",
+   "mobile": "9123400001",
+   "gst": "",
+   "type": "retailer",
+   "typeOther": "",
+   "makes": null,
+   "photo": null,
+   "loc": null,
+   "address": "",
+   "godownAtShop": null,
+   "godowns": [],
+   "warehouses": null,
+   "areas": []
+  },
+  "companies": {},
+  "customCompanies": [],
+  "items": {},
+  "customItems": {},
+  "people": {},
+  "order": [],
+  "usual": {},
+  "rules": {
+   "payMethods": [
+    "cash",
+    "upi",
+    "credit"
+   ],
+   "routes": true
+  },
+  "skipped": {},
+  "papers": [
+   {
+    "id": "flmupfgdt1x8cj",
+    "kind": "file",
+    "file": "raw/Khata-page-1.jpg",
+    "name": "Khata page 1.jpg",
+    "mime": "image/jpeg",
+    "size": 39080,
+    "step": "people",
+    "at": 1790852693221
+   }
+  ],
+  "stockSel": null
+ }
+}

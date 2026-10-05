@@ -1,0 +1,81 @@
+<!doctype html>
+<!--
+  DISCOVERY WIRING — Customer Success — ticketing-workspace-v2 (v7/stores.html, the team's live panel
+  since 2026-09-26, plus the owner's 2026-10-01 ticket status (v1), and real files for every sample store (v2);
+  frozen as versions/ticketing-workspace-v2)
+  ---------------------------------------------------------
+  This file is the WIRING only — the hub + transition map. It holds NO screen content; the screens
+  live in screens/. This is the proto-FSM: the transition map below is what SSOT-1 (state machine)
+  and SSOT-5 (workflow) are derived from. HTML/CSS/vanilla JS only. Disposable. Not imported by
+  development/.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:," />
+  <title>Customer Success — Discovery (wiring)</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem; max-width: 860px; color: #0d0f12; }
+    h1 { font-size: 1.3rem; }
+    h2 { font-size: 1rem; margin-top: 1.8rem; }
+    .note { color: #555; font-size: 0.86rem; }
+    a { color: #0b7534; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+    th, td { border: 1px solid #dde4e0; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+    th { background: #f4f7f5; }
+    code { background: #eef2ef; padding: 0 0.25rem; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Customer Success — Discovery Prototype (wiring hub)</h1>
+  <p class="note">Iteration goal: FoodBridge's customer success team sees every store a distributor built — newest first —
+  and opens his answers and every file he sent, as he sent them, to set the store up. Only the team gets in.</p>
+
+  <h2>Screens</h2>
+  <ul>
+    <li><a href="screens/built-stores.html">Built stores</a> — the team panel: key gate, list, search, downloads,
+      and (v2) a status per store with filter tabs (runs on the seed, no server; team key <code>fb-team-demo</code>)</li>
+  </ul>
+  <p><a href="screens/built-stores.html"><strong>▶ Start the flow →</strong></a></p>
+
+  <h2>Transition map — team access (→ SSOT-5 workflow)</h2>
+  <table>
+    <thead><tr><th>From</th><th>Event</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>Panel, no key</td><td>OPEN</td><td>Key form (the server answers 401)</td></tr>
+      <tr><td>Key form</td><td>SUBMIT_KEY (wrong)</td><td>Key form, “That key was not accepted.”</td></tr>
+      <tr><td>Key form</td><td>SUBMIT_KEY (right)</td><td>Built stores list (the key is kept in this browser)</td></tr>
+      <tr><td>List</td><td>SEARCH (shop · owner · mobile · GST · id)</td><td>List, filtered</td></tr>
+      <tr><td>List</td><td>DOWNLOAD (Excel · setup.json · his files · photos · voice notes)</td><td>The file, as he sent it (pieced files rejoined)</td></tr>
+      <tr><td>List</td><td>REFRESH</td><td>List, newest first</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Transition map — a built store, as the team sees it (→ SSOT-1 state machine)</h2>
+  <table>
+    <thead><tr><th>State</th><th>Event</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td><code>arriving</code> (“Still arriving from the phone: …”)</td><td>last file lands</td><td><code>received</code></td></tr>
+      <tr><td><code>received</code></td><td>— (v1 has no review states)</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <h2>Transition map — a ticket (v2; v3 adds Ready to use, → SSOT-1 state machine)</h2>
+  <table>
+    <thead><tr><th>State</th><th>Event</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td><code>new</code> (every store arrives as one)</td><td>START_REVIEW</td><td><code>inReview</code></td></tr>
+      <tr><td><code>new</code> / <code>inReview</code></td><td>MARK_SET_UP — <em>only once every file has arrived</em></td><td><code>setUp</code></td></tr>
+      <tr><td><code>setUp</code></td><td>MARK_READY — <em>v3: only once it is Set up</em></td><td><code>ready</code> — Ready to use; the owner's chat switches on his store's options (read through this module's readiness contract)</td></tr>
+      <tr><td>any</td><td>MOVE (to another status; never to <code>ready</code> before <code>setUp</code>)</td><td>that status; each move is timed and kept in the ticket's history</td></tr>
+    </tbody>
+  </table>
+  <p class="note">v2 (2026-10-01, owner): every store is a ticket — the start of a ticketing and operations workspace.
+  No reply to the owner (v3 changes this one thing: <em>Ready to use</em> reaches his chat — addendum-006). One common team key. Builds stay read-only; tickets are the team's own.</p>
+  <p class="note">Data: <a href="seed-data/seed.json">seed-data/seed.json</a> and its real files in
+  <code>seed-data/files/</code> (each store made by the Store Setup prototype's own export) — three built stores exactly as
+  <code>GET /api/stores</code> returns them. Builds come from the store-setup module (through its
+  SSOT-7 <code>StoreBuildFeed</code>); this discovery stands on its own and does not link to that one.</p>
+</body>
+</html>

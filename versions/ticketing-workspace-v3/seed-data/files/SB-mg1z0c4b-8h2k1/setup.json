@@ -1,0 +1,539 @@
+{
+ "kind": "foodbridge-chat-app",
+ "v": 1,
+ "catalogue": "2026-09-26e",
+ "at": "2026-09-30T17:05:00.000Z",
+ "state": {
+  "v": 1,
+  "lang": "hi",
+  "startedAt": 1790785800000,
+  "updatedAt": null,
+  "store": {
+   "name": "Shree Ganesh Traders",
+   "owner": "Ramesh",
+   "mobile": "9876500012",
+   "gst": "27AAACG1234F1Z5",
+   "type": "wholesaler",
+   "typeOther": "",
+   "makes": null,
+   "photo": null,
+   "loc": null,
+   "address": "",
+   "godownAtShop": null,
+   "godowns": [],
+   "warehouses": 1,
+   "areas": []
+  },
+  "companies": {},
+  "customCompanies": [],
+  "items": {},
+  "customItems": {},
+  "people": {
+   "pmupfgbcjj62k": {
+    "id": "pmupfgbcjj62k",
+    "name": "Shree Kirana",
+    "phone": "9819010000",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjp7en": {
+    "id": "pmupfgbcjp7en",
+    "name": "Jai Super Market",
+    "phone": "9819010037",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjew7m": {
+    "id": "pmupfgbcjew7m",
+    "name": "Om Mart",
+    "phone": "9819010074",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcj8keo": {
+    "id": "pmupfgbcj8keo",
+    "name": "Sai Traders",
+    "phone": "9819010111",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjbvco": {
+    "id": "pmupfgbcjbvco",
+    "name": "New General Stores",
+    "phone": "9819010148",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjlopv": {
+    "id": "pmupfgbcjlopv",
+    "name": "Laxmi Provision Store",
+    "phone": "9819010185",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcja592": {
+    "id": "pmupfgbcja592",
+    "name": "Balaji Kirana",
+    "phone": "9819010222",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjv3k3": {
+    "id": "pmupfgbcjv3k3",
+    "name": "Krishna Super Market",
+    "phone": "9819010259",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjpkaf": {
+    "id": "pmupfgbcjpkaf",
+    "name": "Mahalaxmi Mart",
+    "phone": "9819010296",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcju9ou": {
+    "id": "pmupfgbcju9ou",
+    "name": "Ganesh Traders",
+    "phone": "9819010333",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcj9ja0": {
+    "id": "pmupfgbcj9ja0",
+    "name": "Durga General Stores",
+    "phone": "9819010370",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcj6fqt": {
+    "id": "pmupfgbcj6fqt",
+    "name": "Vijay Provision Store",
+    "phone": "9819010407",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjz612": {
+    "id": "pmupfgbcjz612",
+    "name": "Anand Kirana",
+    "phone": "9819010444",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjh549": {
+    "id": "pmupfgbcjh549",
+    "name": "Shiv Super Market",
+    "phone": "9819010481",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcj0odh": {
+    "id": "pmupfgbcj0odh",
+    "name": "Shree Mart 2",
+    "phone": "9819010518",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcj3kys": {
+    "id": "pmupfgbcj3kys",
+    "name": "Jai Traders 2",
+    "phone": "9819010555",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcju22b": {
+    "id": "pmupfgbcju22b",
+    "name": "Om General Stores 2",
+    "phone": "9819010592",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjqsy5": {
+    "id": "pmupfgbcjqsy5",
+    "name": "Sai Provision Store 2",
+    "phone": "9819010629",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcj7rwj": {
+    "id": "pmupfgbcj7rwj",
+    "name": "New Kirana 2",
+    "phone": "9819010666",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjc7qf": {
+    "id": "pmupfgbcjc7qf",
+    "name": "Laxmi Super Market 2",
+    "phone": "9819010703",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjl5we": {
+    "id": "pmupfgbcjl5we",
+    "name": "Balaji Mart 2",
+    "phone": "9819010740",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjszhj": {
+    "id": "pmupfgbcjszhj",
+    "name": "Krishna Traders 2",
+    "phone": "9819010777",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjailv": {
+    "id": "pmupfgbcjailv",
+    "name": "Mahalaxmi General Stores 2",
+    "phone": "9819010814",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjxjkt": {
+    "id": "pmupfgbcjxjkt",
+    "name": "Ganesh Provision Store 2",
+    "phone": "9819010851",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjhizn": {
+    "id": "pmupfgbcjhizn",
+    "name": "Durga Kirana 2",
+    "phone": "9819010888",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjk99v": {
+    "id": "pmupfgbcjk99v",
+    "name": "Vijay Super Market 2",
+    "phone": "9819010925",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjxhfk": {
+    "id": "pmupfgbcjxhfk",
+    "name": "Anand Mart 2",
+    "phone": "9819010962",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjt99w": {
+    "id": "pmupfgbcjt99w",
+    "name": "Shiv Traders 2",
+    "phone": "9819010999",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjd9dq": {
+    "id": "pmupfgbcjd9dq",
+    "name": "Shree General Stores 3",
+    "phone": "9819011036",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcj7m8x": {
+    "id": "pmupfgbcj7m8x",
+    "name": "Jai Provision Store 3",
+    "phone": "9819011073",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjb3e9": {
+    "id": "pmupfgbcjb3e9",
+    "name": "Om Kirana 3",
+    "phone": "9819011110",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjr6l4": {
+    "id": "pmupfgbcjr6l4",
+    "name": "Sai Super Market 3",
+    "phone": "9819011147",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjif8m": {
+    "id": "pmupfgbcjif8m",
+    "name": "New Mart 3",
+    "phone": "9819011184",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjteml": {
+    "id": "pmupfgbcjteml",
+    "name": "Laxmi Traders 3",
+    "phone": "9819011221",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjyq43": {
+    "id": "pmupfgbcjyq43",
+    "name": "Balaji General Stores 3",
+    "phone": "9819011258",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjhf0g": {
+    "id": "pmupfgbcjhf0g",
+    "name": "Krishna Provision Store 3",
+    "phone": "9819011295",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjq6sj": {
+    "id": "pmupfgbcjq6sj",
+    "name": "Mahalaxmi Kirana 3",
+    "phone": "9819011332",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjd53p": {
+    "id": "pmupfgbcjd53p",
+    "name": "Ganesh Super Market 3",
+    "phone": "9819011369",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjx19j": {
+    "id": "pmupfgbcjx19j",
+    "name": "Durga Mart 3",
+    "phone": "9819011406",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjqsyp": {
+    "id": "pmupfgbcjqsyp",
+    "name": "Vijay Traders 3",
+    "phone": "9819011443",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjcanh": {
+    "id": "pmupfgbcjcanh",
+    "name": "Anand General Stores 3",
+    "phone": "9819011480",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjm67j": {
+    "id": "pmupfgbcjm67j",
+    "name": "Shiv Provision Store 3",
+    "phone": "9819011517",
+    "type": "shop",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjqw8s": {
+    "id": "pmupfgbcjqw8s",
+    "name": "Hindustan Distributors",
+    "phone": "9820120000",
+    "type": "supplier",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcj3kwv": {
+    "id": "pmupfgbcj3kwv",
+    "name": "Patel Oil Depot",
+    "phone": "9820120053",
+    "type": "supplier",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjxxu2": {
+    "id": "pmupfgbcjxxu2",
+    "name": "Agarwal Sugar Agency",
+    "phone": "9820120106",
+    "type": "supplier",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjc818": {
+    "id": "pmupfgbcjc818",
+    "name": "Krishna Dal Mill",
+    "phone": "9820120159",
+    "type": "supplier",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjn040": {
+    "id": "pmupfgbcjn040",
+    "name": "Maruti Rice Traders",
+    "phone": "9820120212",
+    "type": "supplier",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjv0f4": {
+    "id": "pmupfgbcjv0f4",
+    "name": "Gokul Spices",
+    "phone": "9820120265",
+    "type": "supplier",
+    "src": "vcf",
+    "at": 1790852690035
+   },
+   "pmupfgbcjis4w": {
+    "id": "pmupfgbcjis4w",
+    "name": "Suresh (driver)",
+    "phone": "9820230000",
+    "type": "staff",
+    "src": "typed",
+    "at": 1790852690035
+   },
+   "pmupfgbcj3u56": {
+    "id": "pmupfgbcj3u56",
+    "name": "Manoj (godown)",
+    "phone": "9820230071",
+    "type": "staff",
+    "src": "typed",
+    "at": 1790852690035
+   },
+   "pmupfgbcjmpl9": {
+    "id": "pmupfgbcjmpl9",
+    "name": "Anita (accounts)",
+    "phone": "9820230142",
+    "type": "staff",
+    "src": "typed",
+    "at": 1790852690035
+   }
+  },
+  "order": [
+   "pmupfgbcjj62k",
+   "pmupfgbcjp7en",
+   "pmupfgbcjew7m",
+   "pmupfgbcj8keo",
+   "pmupfgbcjbvco",
+   "pmupfgbcjlopv",
+   "pmupfgbcja592",
+   "pmupfgbcjv3k3",
+   "pmupfgbcjpkaf",
+   "pmupfgbcju9ou",
+   "pmupfgbcj9ja0",
+   "pmupfgbcj6fqt",
+   "pmupfgbcjz612",
+   "pmupfgbcjh549",
+   "pmupfgbcj0odh",
+   "pmupfgbcj3kys",
+   "pmupfgbcju22b",
+   "pmupfgbcjqsy5",
+   "pmupfgbcj7rwj",
+   "pmupfgbcjc7qf",
+   "pmupfgbcjl5we",
+   "pmupfgbcjszhj",
+   "pmupfgbcjailv",
+   "pmupfgbcjxjkt",
+   "pmupfgbcjhizn",
+   "pmupfgbcjk99v",
+   "pmupfgbcjxhfk",
+   "pmupfgbcjt99w",
+   "pmupfgbcjd9dq",
+   "pmupfgbcj7m8x",
+   "pmupfgbcjb3e9",
+   "pmupfgbcjr6l4",
+   "pmupfgbcjif8m",
+   "pmupfgbcjteml",
+   "pmupfgbcjyq43",
+   "pmupfgbcjhf0g",
+   "pmupfgbcjq6sj",
+   "pmupfgbcjd53p",
+   "pmupfgbcjx19j",
+   "pmupfgbcjqsyp",
+   "pmupfgbcjcanh",
+   "pmupfgbcjm67j",
+   "pmupfgbcjqw8s",
+   "pmupfgbcj3kwv",
+   "pmupfgbcjxxu2",
+   "pmupfgbcjc818",
+   "pmupfgbcjn040",
+   "pmupfgbcjv0f4",
+   "pmupfgbcjis4w",
+   "pmupfgbcj3u56",
+   "pmupfgbcjmpl9"
+  ],
+  "usual": {},
+  "rules": {
+   "payMethods": [
+    "cash",
+    "upi",
+    "credit"
+   ],
+   "routes": true,
+   "selfOrder": false,
+   "partPay": true,
+   "returns": "credit",
+   "batches": null,
+   "morning": "money",
+   "note": "",
+   "payMethodsOther": "",
+   "returnsOther": "",
+   "morningOther": ""
+  },
+  "skipped": {},
+  "papers": [
+   {
+    "id": "phmupfgbcj9wyq",
+    "kind": "photo",
+    "step": "people",
+    "at": 1790852690051,
+    "mime": "image/jpeg"
+   },
+   {
+    "id": "phmupfgbczdc9c",
+    "kind": "photo",
+    "step": "people",
+    "at": 1790852690059,
+    "mime": "image/jpeg"
+   },
+   {
+    "id": "vnmupfgds7saoy",
+    "kind": "voice",
+    "step": "rules",
+    "at": 1790852693191,
+    "mime": "audio/webm",
+    "secs": 3
+   }
+  ],
+  "stockSel": null
+ }
+}

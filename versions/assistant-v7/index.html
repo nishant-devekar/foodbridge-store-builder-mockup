@@ -1,0 +1,139 @@
+<!doctype html>
+<!--
+  DISCOVERY WIRING — Assistant
+  ---------------------------------------------------------
+  This file is the WIRING only — the hub + transition map. It holds NO screen
+  content; screens live in screens/. The transition map below is the proto-FSM
+  that SSOT-1 (state-machine) and SSOT-5 (workflow) are later derived from.
+  Rules:
+  - HTML/CSS/vanilla JS only. No frameworks, no build step, no real API calls.
+  - Screens are standalone-openable and link to each other; this hub is the entry.
+  - Use seed-data/seed.json for any data.
+  - Disposable. When a version is accepted, snapshot the whole folder
+    (screens/ + index.html + seed-data) into versions/vN/.
+  - Nothing here is imported by development/. It only informs the SSOTs.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="screens/favicon.ico" />
+  <title>Assistant — Discovery (wiring)</title>
+  <style>
+    :root { --ink: #111B21; --sub: #54656F; --line: #E3E6EA; --g: #008069; --tint: #F0F7F4; }
+    * { box-sizing: border-box; }
+    body { font: 14px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: #fff; margin: 0; }
+    main { max-width: 980px; margin: 0 auto; padding: 28px 16px 64px; }
+    h1 { font-size: 22px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 32px 0 8px; } h3 { font-size: 14px; margin: 18px 0 6px; }
+    p { margin: 6px 0; } .sub { color: var(--sub); }
+    a { color: #00664F; }
+    .open { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 14px; }
+    .open a { display: block; padding: 14px; border: 1px solid var(--line); border-radius: 10px; text-decoration: none; color: var(--ink); background: var(--tint); }
+    .open a b { display: block; color: var(--g); font-size: 15px; } .open a small { color: var(--sub); }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 6px; }
+    th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+    th { background: #F7F8FA; font-weight: 600; }
+    code { font-size: 12.5px; background: #F2F4F5; padding: 1px 4px; border-radius: 4px; }
+    .tag { display: inline-block; padding: 1px 8px; border-radius: 99px; background: #FFEECD; color: #7A5B12; font-size: 12px; font-weight: 600; }
+    .note { color: var(--sub); font-size: 13px; }
+    pre { background: #F7F8FA; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; font-size: 12.5px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Assistant — discovery</h1>
+  <p class="sub">The FoodBridge Assistant: a distributor sets up his store in a WhatsApp-style chat, one question at a time —
+    products read from any file, the store summed up, then the request goes to the FoodBridge team.
+    <span class="tag">assistant-v7 — for review</span></p>
+
+  <div class="open">
+    <a href="screens/chat.html"><b>The assistant ↗</b><small>Its own page, opens on “hi”. On a computer: WhatsApp Web: chats, the conversation, your store setup.</small></a>
+    <a href="screens/chat.html?device=phone"><b>As on a phone ↗</b><small>The contacts card is the address book. Best in a phone-sized window.</small></a>
+    <a href="screens/tower.html"><b>In the Control Tower ↗</b><small>The same chat as the tower's panel, over the Vasu Foods board.</small></a>
+    <a href="screens/sent.html"><b>What reached FoodBridge ↗</b><small>The builds from <i>Create my store</i>.</small></a>
+  </div>
+  <p class="note" style="margin-top:10px">Serve over HTTP (a service worker stands in for the bridge and for Claude; it does not run from <code>file://</code>):
+    <code>python3 -m http.server 8790 --directory modules/assistant/discovery</code>. Nothing leaves the browser.
+    <code>?vasu=&lt;url&gt;</code> points the tower at another copy of mock-platform v7 (default: the published one).
+    Start fresh: the chat's ⋯ → Start again.</p>
+
+  <h2>The question tree (<code>screens/chat/onboard.js</code>)</h2>
+  <p class="sub">One question at a time. v6 changes marked ●. Every answer lands in the store's state (<code>screens/store/model.js</code>), so the
+    Excel the team receives carries exactly what he said.</p>
+  <table>
+    <tr><th>#</th><th>Node</th><th>Asks</th><th>Answered by</th><th>Writes</th></tr>
+    <tr><td>0</td><td>(welcome)</td><td>Namaste 🙏 I'm your FoodBridge Assistant.</td><td><b>Set up my store</b> ●</td><td>—</td></tr>
+    <tr><td>1</td><td><code>mobile</code> ●</td><td>Let's set up your store. Your mobile number?</td><td>typing (tel keypad); 10 digits, 6–9</td><td><code>store.mobile</code> → GET /api/draft</td></tr>
+    <tr><td>1a</td><td><code>sync</code> ●</td><td>A store saved under it: “<i>Sharma Agencies</i> — is this you?” ◆ else an existing FoodBridge account the <b>Digital Assistant</b> finds: “<i>Vasu Foods</i> — is this you?” ◆ not connected: the note <i>🔌 Not connected to FoodBridge Digital Assistant</i></td><td>Yes (saved: its answers fill in; account: its name is the shop) / No</td><td>the saved state, or <code>store.name</code> ◆ (GET /api/assistant/account)</td></tr>
+    <tr><td>2</td><td><code>shop</code> ●</td><td>Your shop or business name? (not asked when the saved store has it)</td><td>typing</td><td><code>store.name</code></td></tr>
+    <tr><td>3</td><td><code>contacts</code></td><td>Add your customers, suppliers and staff.</td><td>phone: the address book; computer: QR → the phone page; any: 📎 a list or .vcf, or pasted rows</td><td><code>people</code>, <code>order</code></td></tr>
+    <tr><td>4</td><td><code>sort</code></td><td>Who is who? (guessed from names)</td><td><b>Looks right</b> / <b>Change</b> (a radio per person)</td><td><code>people[].type</code></td></tr>
+    <tr><td>5</td><td><code>peopleNote</code> ●</td><td>Anything else about your contacts?</td><td>typing, or <b>No</b></td><td><code>notes.people</code></td></tr>
+    <tr><td>6</td><td><code>type</code> ● (+ <code>typeOther</code>)</td><td>What is your business? — <b>as many as apply</b> (+ Supplier ●)</td><td>ticks + Done, or typed</td><td><code>store.types</code> (first → <code>store.type</code>)</td></tr>
+    <tr><td>7</td><td><code>warehouses</code></td><td>How many warehouses?</td><td>dropdown</td><td><code>store.warehouses</code></td></tr>
+    <tr><td>8</td><td><code>gst</code></td><td>GST number?</td><td>typing (checked), or <b>Later</b></td><td><code>store.gst</code></td></tr>
+    <tr><td>9–11</td><td><code>routes</code>, <code>selfOrder</code>, <code>partPay</code></td><td>Fixed route days? Customers order on their own? Pay in parts?</td><td>Yes / No</td><td><code>rules.*</code></td></tr>
+    <tr><td>12</td><td><code>payMethods</code> (+ Other)</td><td>How do customers pay?</td><td>ticks</td><td><code>rules.payMethods</code></td></tr>
+    <tr><td>13–14</td><td><code>returns</code> ●, <code>morning</code> ● (+ Other)</td><td>Damaged goods come back. You… / What do you check each morning? — <b>as many as apply</b></td><td>ticks</td><td><code>rules.returns</code>, <code>rules.morning</code> (lists)</td></tr>
+    <tr><td>15</td><td><code>note</code></td><td>Anything else about your day?</td><td>typing, or <b>No</b></td><td><code>rules.note</code></td></tr>
+    <tr><td>16</td><td><code>products</code></td><td>Send your product list.</td><td>📎 → <code>POST /api/extract</code> (Claude; stand-in here) → shown back → <b>Add all</b> / <b>Check</b></td><td><code>items</code>, <code>customItems</code>; the file kept as <code>raw/</code></td></tr>
+    <tr><td>17</td><td><code>productsNote</code> ●</td><td>Anything else about your products?</td><td>typing, or <b>No</b></td><td><code>notes.products</code></td></tr>
+    <tr><td>18</td><td><code>files</code></td><td>Any papers to share? Khata, bills, route chart.</td><td>📎, or photos from the phone (QR on a computer)</td><td><code>papers</code></td></tr>
+    <tr><td>19</td><td><code>endNote</code> ●</td><td>Anything else?</td><td>typing, or <b>No</b></td><td><code>notes.end</code></td></tr>
+    <tr><td>20</td><td><code>summary</code></td><td>Your store (a card + the facts)</td><td><b>Create my store</b> / <b>Change</b></td><td>—</td></tr>
+    <tr><td>21</td><td><code>done</code> ●</td><td>✅ Done! We'll set up your store and send you a login link.</td><td>— <b>it stops here</b> ●</td><td>the build (POST /api/stores)</td></tr>
+    <tr><td>22</td><td>(ready) ◆</td><td>🟢 <i>Sharma Agencies</i> is ready to use. — when the team marks the request <b>Ready to use</b> (Business Panel)</td><td>Open my store · Create an order · Order for tomorrow · Collection request · Send a campaign · Add customers · Add products · Add staff</td><td>—</td></tr>
+    <tr><td>23</td><td>(a store option) ◆</td><td>the Digital Assistant's login link for that screen — not connected: the note + <i>Sample link: foodbridge.io/platform/smart-link?code=xYz12A</i></td><td>—</td><td>POST /api/assistant/link {event}</td></tr>
+  </table>
+  <p class="note">◆ v7 (addendum-014). The request's step (Requested · In review · Set up · Ready to use) shows on it in the FoodBridge Team chat
+    and on <i>What reached FoodBridge</i>; a dashed <b>Demo · team</b> row stands in for the Business Panel (the two discoveries share nothing).
+    The Digital Assistant's two scopes here — the account by mobile and the login link — refuse with 503 <code>ASSISTANT_NOT_CONNECTED</code>.</p>
+  <p class="note">● v6 (addendum-013). Gone in v6: the owner's name, the next actions (order, tomorrow's order, collection) and the campaign —
+    they belong to the assistant inside his store, after he logs in from a link.</p>
+
+  <h2>Transition map (proto-FSM → SSOT-1, SSOT-5)</h2>
+<pre>
+idle ──hi──▶ welcome ──Set up my store──▶ mobile ─[draftLookup]─▶ (sync)? ─▶ (shop)? ─▶ contacts ⟲ (more) ─▶ sort ⟲ (sheet) ─▶ peopleNote
+  ─▶ type ─▶ (typeOther)? ─▶ warehouses ─▶ gst ─▶ routes ─▶ selfOrder ─▶ partPay ─▶ payMethods ─▶ (payOther)?
+  ─▶ returns ─▶ (returnsOther)? ─▶ morning ─▶ (morningOther)? ─▶ note ─▶ products ⟲ (extract | sample | check) ─▶ productsNote ─▶ files ⟲ ─▶ endNote
+  ─▶ summary ──Change──▶ any section's first node ─(section done)─▶ summary
+  summary ──Create my store─[build: POST /api/stores]─▶ done ──(team: Ready to use)──▶ ready ──a store option─[POST /api/assistant/link]─▶ link (not connected: sample)
+  any node ──"back"──▶ the previous node          any ──"menu"──▶ the menu (Continue · Start again)
+  tower panel: idle ──tower intents (needs, deliveries … production, news)──▶ answers from the Vasu snapshot ── "Set up a new store" ──▶ mobile
+</pre>
+
+  <h2>Decisions</h2>
+  <table>
+    <tr><th>#</th><th>Decision (owner, 5 Oct 2026)</th><th>Here</th><th>Feeds</th></tr>
+    <tr><td>D1</td><td>Create my store still sends the build to the customer success team (v6: the next actions left the onboarding)</td><td>build = Store Setup's (<code>store/outbox.js</code>); next actions → mock-platform v7</td><td>SSOT-5, SSOT-7</td></tr>
+    <tr><td>D2</td><td>A page of its own that opens on hi; the Control Tower's assistant is the same chat in a panel</td><td><code>chat.html</code>, <code>tower.html</code> — one engine, one conversation</td><td>SSOT-3, SSOT-4</td></tr>
+    <tr><td>D3</td><td>The Claude API key is tech debt</td><td>TD-1 below; the contract is <a href="claude/extract-products.md">claude/extract-products.md</a></td><td>SSOT-7</td></tr>
+    <tr><td>D4</td><td>A simple campaign (v5) — <b>gone in v6</b>: it belongs to the assistant inside his store</td><td>—</td><td>—</td></tr>
+    <tr><td>D6</td><td>v6: many answers where they suit; "anything else?" after contacts, products and at the end; mobile first, then the shop's name (no owner's name); it stops at the store request; no subtitles or descriptions</td><td>addendum-013</td><td>SSOT-1, -2, -3, -5</td></tr>
+    <tr><td>D7</td><td>v7: the account by mobile and the owner's login links are the <b>FoodBridge Digital Assistant's</b> (never the host's DB); not connected → said in one line, a labelled sample link; the team's <b>Ready to use</b> switches on his store's options</td><td>addendum-014</td><td>SSOT-1, -5, -7</td></tr>
+    <tr><td>D5</td><td>A new module in the module repo, not part of store-setup; discovery first, development after the freeze</td><td><code>modules/assistant</code>; Store Setup code is <b>copied</b>, never linked</td><td>parent addendum-009</td></tr>
+  </table>
+
+  <h2>Tech debt and open questions</h2>
+  <table>
+    <tr><th>#</th><th>What</th><th>Now</th></tr>
+    <tr><td>v2</td><td>The desktop as WhatsApp Web (owner, 5 Oct 2026: “enterprise grade”)</td><td>at 900 px and wider: the chat list (the Assistant; FoodBridge Team = his store as FoodBridge received it — only once his mobile has one), a light header, the conversation edge to edge, a flat message bar, centred dialogs, the store-setup drawer (ⓘ). v3: nothing without a job — no rail, search, filters or decorations. Narrower: the phone layout, unchanged</td></tr>
+    <tr><td>TD-1</td><td>Claude is not called (no API key)</td><td>spreadsheets are read by the stand-in for real; photos/PDFs come back “can't read yet — kept for the team” + a labelled sample read; the summary is a template</td></tr>
+    <tr><td>Q-1</td><td>Hindi</td><td>Store Setup is bilingual; the chat is English in v1 (it understands typed Hinglish: haan, nahi, paisa, udhaar…). Ask the owner before adding हिंदी</td></tr>
+    <tr><td>Q-2</td><td>Products and Warehouse stock are hidden in Store Setup (1 Oct 2026)</td><td>the owner asked for products again, so they are asked here; warehouse stock stays out</td></tr>
+  </table>
+
+  <h2>Where things come from</h2>
+  <table>
+    <tr><th>Files</th><th>Copied from</th><th>Changed</th></tr>
+    <tr><td><code>screens/store/</code> (model, catalogue, export, import, outbox, icons, gcontacts, send/, vendor/qrcode)</td><td>store-setup-v5 prototype (frozen)</td><td>only <code>outbox.js</code>'s IndexedDB names (<code>fb-assistant-store*</code>), so the two modules never share data</td></tr>
+    <tr><td><code>discovery-bridge.js</code></td><td>store-setup-v5's stand-in bridge</td><td>own cache; the picker serves <code>store/send/</code>; + <code>/api/extract</code></td></tr>
+    <tr><td><code>screens/chat/shell.css</code>, <code>mascot/</code></td><td>mock-platform v7 Control Tower assistant @ 2a7ead3</td><td>none (<code>widgets.css</code> adds to it)</td></tr>
+    <tr><td><code>screens/chat/tower-brain.js</code></td><td>mock-platform v7 <code>assets/ct/chat.js</code> @ 2a7ead3</td><td>+ Production; local rupees(); hands unknown words back (marked in the file)</td></tr>
+    <tr><td><code>seed-data/tower-snapshot.json</code></td><td>the live v7 Control Tower (Vasu Foods), 5 Oct 2026</td><td>6 rows a tile, 8 events a day</td></tr>
+  </table>
+  <p class="note">New here: <code>screens/chat/onboard.js</code> (the tree), <code>app.js</code> (drawing and hooks), <code>extract-standin.js</code>, <code>widgets.css</code>, the screens.
+    Tests: <code>node --test tests/*.test.js</code> from <code>discovery/</code>. Inputs and the decision log are in the module repo (<code>discovery/instructions/</code>).</p>
+</main>
+</body>
+</html>

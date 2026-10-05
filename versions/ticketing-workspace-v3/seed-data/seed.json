@@ -1,0 +1,169 @@
+{
+ "_note": "Customer Success discovery seed (ticketing-workspace-v2): three built stores exactly as GET /api/stores lists them, newest first — each made by the Store Setup prototype's own export (FB_MODEL + FB_EXPORT, mock-platform 3c840e6) at its date, with invented people and generated photos of paper. Every file is real and sits in files/<id>/ (the 3 MB rate list is listed in 2 pieces, as the bridge lists it). The third store's khata photo is still arriving. tickets: the team's own status per store (customer-success owns these, not store-setup).",
+ "store": "blob",
+ "stores": [
+  {
+   "id": "FB-mg2k9x1a-4f7q2",
+   "meta": {
+    "id": "FB-mg2k9x1a-4f7q2",
+    "at": "2026-10-01T05:00:00.000Z",
+    "received": "2026-10-01T05:00:40.000Z",
+    "shop": "Vasu Foods",
+    "owner": "Vikram",
+    "mobile": "98200 11223",
+    "gst": "27AAPFG1234K1Z5",
+    "type": "distributor",
+    "counts": {
+     "products": 0,
+     "customers": 5,
+     "suppliers": 2,
+     "staff": 2,
+     "counted": 0,
+     "answered": 6,
+     "photos": 2,
+     "gaps": 0
+    },
+    "files": [
+     "FoodBridge-Setup-Vasu-Foods-2026-10-01.xlsx",
+     "setup.json",
+     "raw/Route-chart-Monday.jpg",
+     "raw/Rate-list-Oct.pdf"
+    ],
+    "lang": "en",
+    "version": "store-setup 1"
+   },
+   "files": [
+    {
+     "name": "FoodBridge-Setup-Vasu-Foods-2026-10-01.xlsx",
+     "size": 44215
+    },
+    {
+     "name": "setup.json",
+     "size": 3987
+    },
+    {
+     "name": "raw/Route-chart-Monday.jpg",
+     "size": 67705
+    },
+    {
+     "name": "raw/Rate-list-Oct.pdf",
+     "size": 3142484,
+     "parts": 2
+    }
+   ],
+   "missing": []
+  },
+  {
+   "id": "FB-mg1z0c4b-8h2k1",
+   "meta": {
+    "id": "FB-mg1z0c4b-8h2k1",
+    "at": "2026-09-30T17:05:00.000Z",
+    "received": "2026-09-30T17:05:40.000Z",
+    "shop": "Shree Ganesh Traders",
+    "owner": "Ramesh",
+    "mobile": "9876500012",
+    "gst": "27AAACG1234F1Z5",
+    "type": "wholesaler",
+    "counts": {
+     "products": 0,
+     "customers": 42,
+     "suppliers": 6,
+     "staff": 3,
+     "counted": 0,
+     "answered": 6,
+     "photos": 3,
+     "gaps": 0
+    },
+    "files": [
+     "FoodBridge-Setup-Shree-Ganesh-Traders-2026-09-30.xlsx",
+     "setup.json",
+     "photos/phmupfgbcj9wyq.jpg",
+     "photos/phmupfgbczdc9c.jpg",
+     "voice/vnmupfgds7saoy.webm"
+    ],
+    "lang": "hi",
+    "version": "store-setup 1"
+   },
+   "files": [
+    {
+     "name": "FoodBridge-Setup-Shree-Ganesh-Traders-2026-09-30.xlsx",
+     "size": 55320
+    },
+    {
+     "name": "setup.json",
+     "size": 11487
+    },
+    {
+     "name": "photos/phmupfgbcj9wyq.jpg",
+     "size": 51725
+    },
+    {
+     "name": "photos/phmupfgbczdc9c.jpg",
+     "size": 52683
+    },
+    {
+     "name": "voice/vnmupfgds7saoy.webm",
+     "size": 40666
+    }
+   ],
+   "missing": []
+  },
+  {
+   "id": "FB-mg0y7d2e-1q9w3",
+   "meta": {
+    "id": "FB-mg0y7d2e-1q9w3",
+    "at": "2026-09-29T11:40:00.000Z",
+    "received": "2026-09-29T11:40:40.000Z",
+    "shop": "",
+    "owner": "",
+    "mobile": "9123400001",
+    "gst": "",
+    "type": "retailer",
+    "counts": {
+     "products": 0,
+     "customers": 0,
+     "suppliers": 0,
+     "staff": 0,
+     "counted": 0,
+     "answered": 2,
+     "photos": 1,
+     "gaps": 1
+    },
+    "files": [
+     "FoodBridge-Setup-store-2026-09-29.xlsx",
+     "setup.json",
+     "raw/Khata-page-1.jpg"
+    ],
+    "lang": "en",
+    "version": "store-setup 1"
+   },
+   "files": [
+    {
+     "name": "FoodBridge-Setup-store-2026-09-29.xlsx",
+     "size": 34170
+    },
+    {
+     "name": "setup.json",
+     "size": 984
+    }
+   ],
+   "missing": [
+    "raw/Khata-page-1.jpg"
+   ]
+  }
+ ],
+ "tickets": {
+  "FB-mg2k9x1a-4f7q2": {
+   "status": "new",
+   "since": "2026-10-01T05:00:00.000Z"
+  },
+  "FB-mg1z0c4b-8h2k1": {
+   "status": "setUp",
+   "since": "2026-10-01T04:15:00.000Z"
+  },
+  "FB-mg0y7d2e-1q9w3": {
+   "status": "new",
+   "since": "2026-09-29T11:41:00.000Z"
+  }
+ }
+}
