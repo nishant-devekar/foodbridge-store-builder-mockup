@@ -22,7 +22,7 @@
     return { menu: false, panel: false, sheet: false, chat: [], draft: null, ticked: null, dmode: "driver", driverId: null, note: "",
       files: [], photos: [], shoot: { live: false, scene: 0, note: "" }, zoho: "idle", voice: { text: "", on: false }, cat: { q: "", picked: {}, hi: -1, focused: false },
       sel: null, filter: "all", undo: [], reveal: false, focusFx: null, drag: false, dropAsk: false,
-      view: null, rmenu: false, fixing: false, fixSkip: {}, fixTotal: 0, edit: null, snack: "" };
+      view: null, rmenu: false, fixing: false, fixSkip: {}, fixTotal: 0, edit: null, snack: "", pq: "", pcat: null };
   }
   var ui = freshUi();
 
@@ -61,6 +61,7 @@
     shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
     dots: '<circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/>',
     lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/>',
     pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'
   };
   function ic(n, size, sw) { return '<svg width="' + (size || 20) + '" height="' + (size || 20) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (sw || 2) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[n] + "</svg>"; }
@@ -79,6 +80,10 @@
   function stepHead(n) {
     var segs = ""; for (var i = 0; i < 6; i++) segs += "<i" + (i < n ? ' class="on"' : "") + "></i>";
     return '<div class="stephead"><div class="row"><a class="iconbtn" href="#home" aria-label="Close, back to Getting started">' + ic("close", 22) + "</a><span>Step " + n + ' of 6</span></div><div class="segs" role="img" aria-label="Step ' + n + ' of 6">' + segs + "</div></div>";
+  }
+  // Step 1 runs inside the Products page's Import (addendum-022): its own header, back to where the owner came from.
+  function importHead(back) {
+    return '<div class="stephead imp"><div class="row"><a class="iconbtn" href="' + back + '" aria-label="Back">' + ic("back", 22) + "</a><span>Import products</span></div></div>";
   }
   // A confirmation stays until the owner moves on. s.flash is either a string (show it on the next screen) or
   // { text, route } (show it when that screen is next open: the driver's "Delivered" is for the owner's home).
@@ -150,7 +155,7 @@
   // ---------- what the next step says ----------
   function nextText(n) {
     var T = {
-      items: { title: "Add your products", label: "Start", href: "#items" },
+      items: { title: "Add your products", label: "Start", href: "#products" },
       customers: { title: "Add customers from your contacts", label: "Start", href: "#customers" },
       order: { title: "Take your first order", label: "Start", href: "#order" },
       deliver: { title: "Deliver it, by driver or pickup", label: "Start", href: "#deliver" },
@@ -166,38 +171,85 @@
     return T[n.id];
   }
 
-  function doneLine() {
-    var parts = [];
-    if (E.isDone(s, "items")) parts.push(s.items.saved.length + " products");
-    if (E.isDone(s, "customers")) parts.push(s.customers.ids.length + " customers");
-    if (E.isDone(s, "order")) parts.push("first order");
-    if (E.isDone(s, "deliver")) parts.push(s.delivery.status === "delivered" ? "delivered" : "with your driver");
-    if (E.isDone(s, "paid")) parts.push(s.payment.received ? "paid" : "payment link sent");
-    if (E.isDone(s, "plan")) parts.push("daily plan on");
-    return parts.length ? '<div class="donel">' + ic("check", 18, 3) + "<span>" + esc(parts.join(" · ")) + "</span></div>" : "";
+  // What a done step says on Getting started (addendum-022): what the owner did, in a few words.
+  function doneWords(id) {
+    switch (id) {
+      case "items": return s.items.saved.length + " product" + (s.items.saved.length === 1 ? "" : "s");
+      case "customers": return s.customers.ids.length + " customer" + (s.customers.ids.length === 1 ? "" : "s");
+      case "order": return "First order · " + rupees(s.order.total);
+      case "deliver": return s.delivery.status === "delivered" ? "Delivered" : "With your driver";
+      case "paid": return s.payment.received ? "Paid" : "Payment link sent";
+      case "plan": return "Mornings at " + clock(s.plan.morning);
+    }
+    return "";
   }
 
   // ---------- screens ----------
   var V = {};
 
+  // Getting started (addendum-022): every step and where it stands — done, next, processing, or waiting on another.
   V.home = function () {
     var p = E.progress(s), n = E.nextStep(s);
     if (!n) { location.replace("#done"); return ""; }
+    if (s.assist) { s.assist = null; save(); }   // the assistant brought the owner back; its message has done its job
     var fresh = p.done === 0 && !s.items.job && !s.items.sheet.length;
     var t = fresh ? title("Namaste " + SEED.store.owner + " ji, your store in 6 quick steps")
       : title(p.done >= 2 && !E.isDone(s, "order") ? "Your store is ready for orders" : "Getting started");
+    var sum = '<div class="gsum">' + ring(p.percent, 56, frac(p.done, 14), 5) + "<span><b>" + p.done + " of 6 done</b><small>" + (6 - p.done) + " to go</small></span></div>";
     var x = nextText(n);
-    var later = E.isDone(s, "items") ? E.sheetSummary(s.items.sheet, s.items.saved) : null;
-    var reading = n.mode !== "waiting" && s.items.job
-      ? '<a class="rowline" href="#processing" style="text-decoration:none;color:inherit"><span class="spin"></span><span style="flex:1;font-size:15px">Processing your products…</span>' + ic("chev", 18) + "</a>"
-      : later && later.total ? '<a class="rowline" href="#review" style="text-decoration:none;color:inherit">' + ic("grid", 20) + '<span style="flex:1;font-size:15px">' + (later.fix ? later.fix + " product" + (later.fix === 1 ? " needs" : "s need") + " a fix" : later.total + " products not saved yet") + "</span>" + ic("chev", 18) + "</a>" : "";
-    var card = '<div class="card next"><div class="head">' + ring(p.percent, 56, frac(p.done, 14), 5) + "<span><small>Next step</small><strong>" + esc(x.title) + "</strong></span></div>" +
-      (x.label ? '<a class="btn" href="' + x.href + '">' + esc(x.label) + "</a>" : "") + "</div>";
-    var rest = E.STEPS.filter(function (st) { return st.id !== n.id && !E.isDone(s, st.id) && !E.isWaiting(s, st.id); });
-    var list = rest.length ? '<span class="then">Then</span><div class="quiet">' + rest.map(function (st) {
-      return '<div><span class="n">' + E.stepNumber(st.id) + '</span><span class="t">' + esc(st.title) + "</span>" + (E.isLocked(s, st.id) ? '<span class="note">' + esc(E.lockNote(s, st.id)) + "</span>" : "") + "</div>";
+    var rows = E.STEPS.map(function (st) {
+      var num = E.stepNumber(st.id);
+      if (st.id === n.id) {
+        var mark = n.mode === "waiting" ? '<i><span class="spin light"></span></i>' : "<i>" + num + "</i>";
+        return '<div class="st next">' + '<div class="row">' + mark + '<span class="t"><small>Next step</small>' + esc(x.title) + "</span></div>" +
+          '<a class="btn" href="' + x.href + '">' + esc(x.label) + "</a></div>";
+      }
+      if (E.isDone(s, st.id)) {
+        var words = doneWords(st.id), href = st.id === "items" ? "#products" : "";
+        if (st.id === "items" && s.items.job) { words += " · processing more"; href = "#processing"; }
+        else if (st.id === "items" && s.items.sheet.length) { var later = E.sheetSummary(s.items.sheet, s.items.saved); words += " · " + (later.fix ? later.fix + " to fix" : later.total + " not saved"); href = "#review"; }
+        var inner = "<i>" + ic("check", 16, 3) + '</i><span class="t">' + esc(st.title) + "<small>" + esc(words) + "</small></span>" + (href ? ic("chev", 18) : "");
+        return href ? '<a class="st done" href="' + href + '">' + inner + "</a>" : '<div class="st done">' + inner + "</div>";
+      }
+      if (E.isWaiting(s, st.id)) return '<a class="st proc" href="#processing"><i><span class="spin"></span></i><span class="t">' + esc(st.title) + "<small>Processing…</small></span>" + ic("chev", 18) + "</a>";
+      var lock = E.isLocked(s, st.id);
+      return '<div class="st' + (lock ? " lock" : "") + '"><i>' + num + '</i><span class="t">' + esc(st.title) + (lock ? "<small>" + esc(E.lockNote(s, st.id)) + "</small>" : "") + "</span></div>";
+    }).join("");
+    return phone(appHead() + '<div class="body">' + flashHtml() + t + sum + '<div class="steps">' + rows + "</div>" + '<div style="height:70px;flex:none"></div></div>', fab() + panel());
+  };
+
+  // ---------- the platform's Products page (addendum-022) ----------
+  // Its Import runs step 1's flow: choose → processing → check & save. Export, + Product and Bulk Action are drawn only.
+  function assist() {   // the FoodBridge assistant, after a save: what happened, and the way back to Getting started
+    var a = s.assist; if (!a) return "";
+    var n = E.nextStep(s);
+    return '<div class="assist" role="status">' + face(40) + '<div class="tx"><b>' + esc(a.text) + "</b>" + (n ? "<span>Next: " + esc(nextText(n).title.toLowerCase()) + "</span>" : "") +
+      (n ? '<a class="btn" href="#home">Back to Getting started</a>' : "") + '</div><button class="iconbtn" data-act="assistoff" aria-label="Close">' + ic("close", 18) + "</button></div>";
+  }
+  V.products = function () {
+    var all = s.items.saved, q = normQ(ui.pq), cat = ui.pcat;
+    var cats = []; all.forEach(function (r) { if (r.category && cats.indexOf(r.category) < 0) cats.push(r.category); });
+    if (cat && cats.indexOf(cat) < 0) cat = ui.pcat = null;
+    var shown = all.filter(function (r) { return (!q || normQ(r.name).indexOf(q) >= 0) && (!cat || r.category === cat); });
+    var chips = cats.length > 1 ? '<div class="pchips"><button class="chip' + (cat ? "" : " on") + '" data-act="pcat">All</button>' + cats.map(function (c) {
+      return '<button class="chip' + (cat === c ? " on" : "") + '" data-act="pcat" data-v="' + esc(c) + '">' + esc(catName(c)) + "</button>";
     }).join("") + "</div>" : "";
-    return phone(appHead() + '<div class="body">' + flashHtml() + t + doneLine() + reading + card + list + '<div style="height:70px;flex:none"></div></div>', fab() + panel());
+    var cards = shown.map(function (r) {
+      var t = E.taxFlag(r.taxIncl), gst = E.blank(r.gst) ? "" : r.gst + "% " + (t === true ? "incl." : "excl.") + " tax";
+      return '<div class="prod">' + tile(r) + '<span class="pn"><b>' + esc(r.name) + "</b><small>" + esc(unitsLine(r)) + "</small>" + (r.category ? '<span class="ptag">' + esc(catName(r.category)) + "</span>" : "") + "</span>" +
+        '<span class="pr"><b>' + rupees(r.rate) + "</b><small>per " + esc(r.rateUnit || r.bigUnit || "") + "</small>" + (gst ? "<small>" + esc(gst) + "</small>" : "") + "</span></div>";
+    }).join("");
+    var body = all.length
+      ? '<label class="psearch">' + ic("search", 18) + '<input data-bind="psearch" placeholder="Search products" autocomplete="off" value="' + esc(ui.pq) + '"></label>' + chips + jobBar() +
+        (cards || '<p class="muted" style="text-align:center;padding:24px 0">No product matches “' + esc(ui.pq) + "”.</p>")
+      : jobBar() + '<div class="pempty"><span class="wic w-file">' + ic("upload", 30) + "</span><b>No products yet</b>" + go("Import products", "#items") + "</div>";
+    var bar = '<nav class="pbar" aria-label="Products"><button data-act="noop">' + ic("upload", 20) + "Export</button>" +
+      '<a href="#items" class="' + (all.length ? "" : "pulse") + '">' + ic("download", 20) + "Import</a>" +
+      '<button data-act="noop">' + ic("plus", 20) + "Product</button>" +
+      '<button data-act="noop">' + ic("pen", 20) + "Bulk Action</button></nav>";
+    var bub = !all.length && !s.items.job && !s.items.sheet.length ? "Tap Import to add your products" : null;
+    return phone(appHead() + '<div class="body pbody">' + flashHtml() + title("Products") + body + "</div>" + bar,
+      (s.assist ? assist() : fab(bub, 84)) + panel());
   };
 
   // ---------- step 1: six ways in → processing → check and save (addenda 005, 006) ----------
@@ -220,13 +272,12 @@
     var ways = [
       ["#items-file", "upload", "Upload Excel, PDF, any file", "w-file"],
       ["#items-photo", "cam", "Click photos", "w-photo"],
-      ["#items-zoho", "sync", "Sync from Zoho", "w-zoho"],
       ["#items-voice", "mic", "Speak your products", "w-voice"],
       ["#items-catalog", "search", "Search products", "w-cat"]
     ].map(function (w) {
       return '<a class="way ' + w[3] + '" href="' + w[0] + '"><span class="wic">' + ic(w[1], 26) + "</span><b>" + w[2] + "</b>" + (w[0] === "#items-file" ? '<span class="fmt"><i>XLS</i><i>CSV</i><i>PDF</i><i>JPG</i></span>' : "") + "</a>";
     }).join("");
-    return phone(stepHead(1) + '<div class="body">' + flashHtml() + flow(0) + title("Add your products") + jobBar() + '<div class="ways">' + ways + "</div>" +
+    return phone(importHead("#products") + '<div class="body">' + flashHtml() + flow(0) + title("Add your products") + jobBar() + '<div class="ways">' + ways + "</div>" +
       '<p class="droptip">' + ic("upload", 16) + "On a computer, drop files anywhere here</p></div>" + dropOverlay());
   };
   function dropOverlay() { return ui.drag ? '<div class="drop">' + ic("upload", 40) + "<b>Drop to add</b></div>" : ""; }
@@ -239,7 +290,7 @@
     }).join("") + "</div>" : "";
     var zone = '<label for="pick-file" class="dz' + (n ? " small" : "") + '">' + ic("upload", n ? 22 : 34) + "<b>" + (n ? "Add more files" : "Choose files") + "</b>" +
       (n ? "" : '<span class="fmt"><i>XLS</i><i>CSV</i><i>PDF</i><i>JPG</i><i>any</i></span><span class="droptip">or drop them here</span>') + "</label>";
-    return phone(stepHead(1) + '<div class="body">' + flow(0) + title(n ? n + " file" + (n === 1 ? "" : "s") + " selected" : "Upload files") + list + zone + "</div>" +
+    return phone(importHead("#items") + '<div class="body">' + flow(0) + title(n ? n + " file" + (n === 1 ? "" : "s") + " selected" : "Upload files") + list + zone + "</div>" +
       foot(btn("Process " + (n || "") + " file" + (n === 1 ? "" : "s"), "processfiles", n ? "" : " disabled"), '<a class="link quiet" href="#items">Back</a>') + dropOverlay());
   };
 
@@ -289,7 +340,7 @@
     }).join("");
     var more = '<a class="thumb more" href="#items-photo">' + ic("cam", 26) + "<span>Shoot more</span></a>" +
       '<label class="thumb more alt" for="pick-photo-lib">' + ic("grid", 24) + "<span>From your phone's gallery</span></label>";
-    return phone(stepHead(1) + '<div class="body">' + flow(0) + title(n ? n + " photo" + (n === 1 ? "" : "s") : "No photos yet") + '<div class="thumbs">' + thumbs + more + "</div></div>" +
+    return phone(importHead("#items") + '<div class="body">' + flow(0) + title(n ? n + " photo" + (n === 1 ? "" : "s") : "No photos yet") + '<div class="thumbs">' + thumbs + more + "</div></div>" +
       foot(btn("Process " + (n || "") + " photo" + (n === 1 ? "" : "s"), "readphotos", n ? "" : " disabled"), '<a class="link quiet" href="#items">Back</a>'));
   };
 
@@ -318,14 +369,14 @@
       win = '<div class="dim"></div><div class="zwin2" role="dialog" aria-modal="true" aria-label="Zoho">' + bar + '<div class="zin">' + steps + body + "</div>" +
         '<span class="zfoot">Simulated here. In the app this is Zoho\'s own page.</span></div>';
     }
-    return phone(stepHead(1) + '<div class="body">' + flashHtml() + flow(0) + '<div class="zhero">' + badge + "<h1>Connect your Zoho account</h1></div>" + note +
+    return phone(importHead("#items") + '<div class="body">' + flashHtml() + flow(0) + '<div class="zhero">' + badge + "<h1>Connect your Zoho account</h1></div>" + note +
       '<ul class="perks">' + perks + "</ul></div>" +
       foot(btn("Connect with Zoho", "zohoconnect"), '<span class="muted" style="text-align:center;padding:6px 0 2px">We never change anything in your Zoho.</span>'), win);
   };
 
   V["items-voice"] = function () {
     var on = ui.voice.on, said = !!ui.voice.text.trim();   // what was said is read during Processing, never here
-    return phone(stepHead(1) + '<div class="body">' + flow(0) + title("Speak your products") +
+    return phone(importHead("#items") + '<div class="body">' + flow(0) + title("Speak your products") +
       '<div class="mic"><button class="micbtn' + (on ? " on" : "") + '" data-act="mic" aria-pressed="' + on + '" aria-label="' + (on ? "Stop listening" : "Start speaking") + '">' + ic(on ? "stop" : "mic", 40) + "</button>" +
       '<span class="mtip">' + (on ? "Listening… name, units, rate" : "Tap and say: name, units, rate") + "</span>" +
       (ui.voice.text ? "" : '<button class="chip" data-act="voiceex">Try an example</button>') + "</div>" +
@@ -464,7 +515,7 @@
       return '<div class="item"><span class="t"><b>' + esc(x.name) + "</b>" + (x.sub ? "<span>" + esc(x.sub) + "</span>" : "") + '</span><button class="iconbtn" data-act="catunpick" data-id="' + esc(x.id) + '" aria-label="Remove ' + esc(x.name) + '">' + ic("close", 18) + "</button></div>";
     }).join("") + "</div>" : "";
     var n = picked.length;
-    return phone(stepHead(1) + '<div class="body" style="gap:12px">' + flow(0) + title("Search products") + box + hint + sel + "</div>" +
+    return phone(importHead("#items") + '<div class="body" style="gap:12px">' + flow(0) + title("Search products") + box + hint + sel + "</div>" +
       foot(btn("Process " + (n || "") + " product" + (n === 1 ? "" : "s"), "catadd", n ? "" : " disabled"), '<a class="link quiet" href="#items">Back</a>'));
   };
 
@@ -485,7 +536,7 @@
       '<div class="bar" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pct + '%"></i></div>' +
       '<ul class="feed" aria-live="polite">' + found.slice(-4).reverse().map(function (r) { return "<li>" + ic("check", 14, 3) + esc(r.name || "(name to fix)") + "</li>"; }).join("") + "</ul></div>";
     var away = E.isDone(s, "customers") ? go("Back to Getting started", "#home") : go("Add customers meanwhile", "#customers");
-    return phone(stepHead(1) + '<div class="body">' + flow(1) + title("Processing") + stages + live + "</div>" +
+    return phone(importHead("#products") + '<div class="body">' + flow(1) + title("Processing") + stages + live + "</div>" +
       foot(away, '<span class="muted" style="text-align:center;padding:4px 0">It keeps going. Check and save opens when it\'s done.</span>'));
   };
   V.reading = function () { location.replace("#processing"); return ""; };
@@ -638,7 +689,7 @@
     var second = nq && sum.ok ? '<button class="link quiet" data-act="savesome">Save ' + sum.ok + " now, fix the rest later</button>" : "";
     var snack = ui.snack ? '<div class="snack" role="status"><span>' + esc(ui.snack) + '</span><button class="link" data-act="snackundo">Undo</button></div>' : "";
     var over = ui.fixing ? fixer() : ui.edit ? editor() : dropSheet(sum) || overflowMenu();
-    return phone(stepHead(1) + '<div class="body cbody">' + flashHtml() +
+    return phone(importHead("#products") + '<div class="body cbody">' + flashHtml() +
       '<div class="chead"><h1>Your rate list</h1><button class="iconbtn" data-act="rmenu" aria-label="More" aria-expanded="' + !!ui.rmenu + '">' + ic("dots", 22) + "</button></div>" +
       '<div class="plist"><div class="phd"><span>Item</span><span>Rate ₹</span></div>' + lines + '</div><a class="padd" href="#items">' + ic("plus", 18) + "Add more products</a></div>" + snack +
       foot(main, second), over);
@@ -696,7 +747,7 @@
 
     var main = sum.fix ? btn("Fix next · " + sum.fix + " left", "fixnext") : btn("Save " + sum.total + " product" + (sum.total === 1 ? "" : "s"), "save", sum.total ? "" : " disabled");
     var second = sum.fix && sum.ok ? '<button class="link quiet" data-act="savesome">Save ' + sum.ok + " now, fix " + sum.fix + " later</button>" : "";
-    return phone(stepHead(1) + '<div class="sbody">' + flow(2) + '<div class="shead"><h1>Check & save</h1><span class="acts">' + (window.innerWidth < 700 ? '<button class="link quiet" data-act="viewcards">' + ic("list", 16) + "List</button>" : "") + '<button class="link quiet" data-act="dropask">' + ic("trash", 16) + "Drop all</button>" +
+    return phone(importHead("#products") + '<div class="sbody">' + flow(2) + '<div class="shead"><h1>Check & save</h1><span class="acts">' + (window.innerWidth < 700 ? '<button class="link quiet" data-act="viewcards">' + ic("list", 16) + "List</button>" : "") + '<button class="link quiet" data-act="dropask">' + ic("trash", 16) + "Drop all</button>" +
       '<a class="link" href="#items">' + ic("plus", 16) + "Add more</a></span></div>" + tools + fx + strip + grid + "</div>" + foot(main, second), dropSheet(sum)).replace('class="phone"', 'class="phone wide"');
   };
 
@@ -968,8 +1019,10 @@
     s.items.saved = s.items.saved.concat(split.good.map(function (r) { var o = {}; Object.keys(r).forEach(function (k) { if (k !== "hint" && k !== "keepBoth") o[k] = r[k]; }); return o; }));
     s.items.sheet = keep; ui.sel = null; ui.undo = []; ui.filter = "all";
     var n = split.good.length;
-    s.flash = (before ? n + " more product" + (n === 1 ? "" : "s") + " saved." : n + " product" + (n === 1 ? "" : "s") + " saved.") + (keep.length ? " " + keep.length + " wait for a fix." : "") + (!before && E.isDone(s, "customers") ? " Your store is ready for orders." : "");
-    location.hash = "#home";
+    // back on the Products page; the assistant says what happened and offers the way back (addendum-022)
+    s.assist = { text: (before ? n + " more product" + (n === 1 ? "" : "s") + " saved." : n + " product" + (n === 1 ? "" : "s") + " saved. Step 1 of 6 done.") + (keep.length ? " " + keep.length + " wait for a fix." : "") };
+    ui.pq = ""; ui.pcat = null;
+    location.hash = "#products";
   }
 
   // speech: the browser's own recognizer where it has one; elsewhere the mic types the example, so the flow still shows
@@ -1015,6 +1068,8 @@
   }
   var ACT = {
     noop: function () {},
+    pcat: function (el) { ui.pcat = el.getAttribute("data-v") || null; },
+    assistoff: function () { s.assist = null; },
     menu: function () { ui.menu = !ui.menu; },
     panel: function () { ui.panel = true; ui.menu = false; },
     "close-panel": function () { ui.panel = false; },
@@ -1223,6 +1278,7 @@
     var b = ev.target.getAttribute("data-bind");
     if (b === "search") { ui.draft.search = ev.target.value; render(); keepTyping('[data-bind="search"]'); }
     if (b === "csearch") { ui.cat.q = ev.target.value; ui.cat.hi = -1; scheduleLive(); render(); keepTyping('[data-bind="csearch"]'); }
+    if (b === "psearch") { ui.pq = ev.target.value; render(); keepTyping('[data-bind="psearch"]'); }
     if (b === "voice") { ui.voice.text = ev.target.value; render(); keepTyping('[data-bind="voice"]'); }
     if (ev.target.id === "catch" && ev.target.value && ui.sel && ui.sel.c) { ui.focusFx = { replace: ev.target.value }; render(); }
   });

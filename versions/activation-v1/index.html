@@ -34,7 +34,7 @@
 </head>
 <body>
   <h1>Store Activation — Discovery Prototype (wiring hub)</h1>
-  <p class="note">Working copy: v1 (frozen in <code>versions/activation-v1/</code>) plus addenda 003–018 — the earlier chat on the store link, titles only on Getting started, and step 1 redesigned: six ways in, one flow (choose → processing → check &amp; save) and the products sheet.</p>
+  <p class="note">Working copy: v1 (frozen in <code>versions/activation-v1/</code>) plus addenda 003–023 — the earlier chat on the store link, titles only on Getting started, and step 1 redesigned: four ways in, one flow (choose → processing → check &amp; save) and the products sheet.</p>
   <p class="note">Iteration goal: can a new owner who has never seen FoodBridge get from the store link to running their
   business (items, customers, first order, delivery, payment, daily plan) on one page, with the floating assistant only
   pointing the way? Everything works end to end in this browser; progress is kept in localStorage.</p>
@@ -47,12 +47,12 @@
     <thead><tr><th>Route</th><th>Screen</th><th>Where it lives</th></tr></thead>
     <tbody>
       <tr><td><a href="screens/activation.html#wa-link">#wa-link</a></td><td>The store link</td><td>Owner's WhatsApp</td></tr>
-      <tr><td><a href="screens/activation.html#home">#home</a></td><td>Getting started: the next step, the rest quietly</td><td>Platform (the activation page)</td></tr>
-      <tr><td><a href="screens/activation.html#items">#items</a></td><td>Step 1: add your products, six ways (drop files here on a computer)</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#home">#home</a></td><td>Getting started: all six steps with their status (done, next, processing, waiting)</td><td>Platform (the activation page)</td></tr>
+      <tr><td><a href="screens/activation.html#products">#products</a></td><td>The platform's Products page: search, product cards, Export · Import · + Product · Bulk Action</td><td>Platform</td></tr>
+      <tr><td><a href="screens/activation.html#items">#items</a></td><td>Import products (step 1): four ways (drop files here on a computer)</td><td>Products → Import</td></tr>
       <tr><td><a href="screens/activation.html#items-file">#items-file</a></td><td>Upload files: the chosen files, add more, Process</td><td>Activation page</td></tr>
       <tr><td><a href="screens/activation.html#items-photo">#items-photo</a></td><td>Photoshoot: shutter, shot after shot (live camera or a demo shelf)</td><td>Activation page</td></tr>
       <tr><td><a href="screens/activation.html#items-gallery">#items-gallery</a></td><td>The shots as a gallery: remove, shoot more, from the phone's gallery, Process</td><td>Activation page</td></tr>
-      <tr><td><a href="screens/activation.html#items-zoho">#items-zoho</a></td><td>Sync from Zoho, one time: connect, then Zoho's window (sign in, allow access; simulated)</td><td>Activation page</td></tr>
       <tr><td><a href="screens/activation.html#items-voice">#items-voice</a></td><td>Speak (or type) your products: name, pack, rate</td><td>Activation page</td></tr>
       <tr><td><a href="screens/activation.html#items-catalog">#items-catalog</a></td><td>Search products: type, pick from FoodBridge's list and live Open Food Facts results (India, food only), Process</td><td>Activation page</td></tr>
       <tr><td><a href="screens/activation.html#processing">#processing</a></td><td>Processing, for every way: live stages, products as they are found (never blocks the next step)</td><td>Activation page</td></tr>
@@ -80,8 +80,7 @@
     <li><a href="screens/activation.html#sample-sheet">Put the sample rate list in the sheet now</a> (14 rows, 5 to fix, 1 with no rate)</li>
     <li><a href="screens/activation.html#reset">Start over</a> (clears this browser's progress)</li>
   </ul>
-  <p class="note">An uploaded file or photo is not read and Zoho is not called: the seed's rate list stands in for files and
-  photos, and 12 clean rows for Zoho. Speaking uses the browser's own speech recognition where it has one (Chrome sends the
+  <p class="note">An uploaded file or photo is not read: the seed's rate list stands in for files and photos. Speaking uses the browser's own speech recognition where it has one (Chrome sends the
   audio to its speech service); elsewhere the mic types an example. No message is sent anywhere; WhatsApp screens show what
   each person would see.</p>
   <p class="note"><b>One real call:</b> Search products asks Open Food Facts (world.openfoodfacts.org, India only, food only)
@@ -95,14 +94,15 @@
     <thead><tr><th>From screen / state</th><th>Event</th><th>To</th></tr></thead>
     <tbody>
       <tr><td>#wa-link</td><td>Open my store</td><td>#home (0 of 6)</td></tr>
-      <tr><td>#home</td><td>Next step's button (always the first open, unlocked, not-waiting step)</td><td>that step's screen</td></tr>
-      <tr><td>#items</td><td>A way's tile</td><td>that way's Choose screen (#items-file, #items-photo, #items-zoho, #items-voice, #items-catalog)</td></tr>
+      <tr><td>#home</td><td>Next step's button (always the first open, unlocked, not-waiting step)</td><td>that step's screen; Add your products → #products</td></tr>
+      <tr><td>#products</td><td>Import (bottom bar, or the empty state's button)</td><td>#items</td></tr>
+      <tr><td>#items</td><td>A way's tile</td><td>that way's Choose screen (#items-file, #items-photo, #items-voice, #items-catalog)</td></tr>
       <tr><td>Any Choose screen</td><td>Process …</td><td>#processing · a job runs in the background</td></tr>
       <tr><td>#processing</td><td>the job finishes</td><td>#review (Check &amp; save) opens by itself</td></tr>
       <tr><td>#processing</td><td>Add customers meanwhile</td><td>#customers · the job keeps going; when done, #home suggests "Fix n products, then save"</td></tr>
       <tr><td>#review</td><td>Fix next / a one-tap fix</td><td>the next cell that needs a fix</td></tr>
-      <tr><td>#review</td><td>Save n products (nothing to fix)</td><td>#home · items done (any product saved)</td></tr>
-      <tr><td>#review</td><td>Save n now, fix m later</td><td>#home · items done; "m products need a fix" links back</td></tr>
+      <tr><td>#review</td><td>Save n products (nothing to fix)</td><td>#products · items done (any product saved); the assistant: "n products saved. Step 1 of 6 done." → Back to Getting started</td></tr>
+      <tr><td>#review</td><td>Save n now, fix m later</td><td>#products, as above; on #home, "n products · m to fix" links back</td></tr>
       <tr><td>#customers</td><td>Add n customers</td><td>#home · customers = done</td></tr>
       <tr><td>#order (unlocks after items + customers)</td><td>Place order</td><td>#placed · order made; paid at once if cash/UPI</td></tr>
       <tr><td>#placed</td><td>Next: deliver it</td><td>#deliver</td></tr>
@@ -112,7 +112,8 @@
       <tr><td>#wa-customer</td><td>Pay by UPI</td><td>payment received; owner sees it on #home</td></tr>
       <tr><td>#plan</td><td>Turn it on</td><td>#done if 6 of 6, else #home</td></tr>
       <tr><td>Any page</td><td>Assistant → Open Getting started</td><td>#home (the assistant never runs a step)</td></tr>
-      <tr><td>Any step</td><td>✕</td><td>#home</td></tr>
+      <tr><td>Any step 2–6</td><td>✕</td><td>#home</td></tr>
+      <tr><td>Import screens</td><td>←</td><td>#products (a way's screen: back to #items)</td></tr>
     </tbody>
   </table></div>
   <p class="note">Data for every screen comes from <a href="seed-data/seed.json">seed-data/seed.json</a>. Rules: <code>screens/activation/engine.js</code>, tested by <code>tests/engine.test.js</code> (<code>node --test tests/engine.test.js</code>).</p>
