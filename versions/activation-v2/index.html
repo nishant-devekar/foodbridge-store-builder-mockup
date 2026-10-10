@@ -1,0 +1,64 @@
+<!doctype html>
+<!--
+  DISCOVERY WIRING — Store Activation
+  ---------------------------------------------------------
+  This file is the WIRING only — the hub + transition map. It holds NO screen
+  content; screens live in screens/. The transition map below is the proto-FSM
+  that SSOT-1 (state-machine) and SSOT-5 (workflow) are later derived from.
+  Rules:
+  - HTML/CSS/vanilla JS only. No frameworks, no build step, no real API calls.
+  - Screens are standalone-openable and link to each other; this hub is the entry.
+  - Use seed-data/seed.json for any data (seed.js mirrors it for file://).
+  - Disposable. When a version is accepted, snapshot the whole folder
+    (screens/ + index.html + seed-data) into versions/vN/.
+  - Nothing here is imported by development/. It only informs the SSOTs.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store Activation — Discovery (wiring)</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem 1rem; max-width: 760px; margin-inline: auto; line-height: 1.5; }
+    h1 { font-size: 1.25rem; }
+    h2 { font-size: 1rem; margin-top: 1.75rem; }
+    .note { color: #666; font-size: 0.85rem; }
+    a { color: #15803d; }
+    .start { display: inline-block; margin: .5rem 0; padding: .6rem 1rem; border-radius: 10px; background: #16a34a; color: #fff; text-decoration: none; font-weight: 600; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+    th, td { border: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+    .scroll { overflow-x: auto; }
+    ul { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>Store Activation — Discovery</h1>
+  <p class="note">Working copy: <b>activation-v2</b>, started blank on 10 Oct 2026 (addendum-031), <b>two setup steps — products and customers</b> (addendum-034), <b>desktop only</b> (addendum-032): under 1024 px the page shows a lock asking to open it on a computer. The rules engine
+  (<code>screens/activation/engine.js</code>), seed data and mascot are kept underneath; the screens are new.</p>
+  <p><a class="start" href="screens/activation.html">Open activation-v2</a></p>
+
+  <h2>Screens</h2>
+  <table>
+    <thead><tr><th>Route</th><th>Screen</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td><a href="screens/activation.html#dashboard">#dashboard</a></td><td>The platform's dashboard, where the owner lands: Getting started banner, sales tiles, Recent Orders, the profile menu, the assistant (addendum-033)</td><td>Platform</td></tr>
+      <tr><td><a href="screens/activation.html#products">#products</a></td><td>Product Master (Finished Goods): toolbar, search, category chips, the products table — empty until step 1 saves products (addendum-035)</td><td>Platform</td></tr>
+      <tr><td><a href="screens/activation.html#customers">#customers</a></td><td>Customer Management (B2B Customers): Import · Sample, tabs, search, the customers table — empty until step 2 adds customers (addendum-035)</td><td>Platform</td></tr>
+      <tr><td>Getting started (modal)</td><td>"Activate your store" (was Getting started, addendum-046): opened from the banner, the profile menu row, the assistant, or an empty page: ① Products · ② Customers — upload (Try a sample file), reading, the review sheet (search, All · Needs fix · Check · Ready, Next issue, the fix bar), Submit; done → Your store is ready (addendum-036)</td><td>Over any platform page</td></tr>
+      <tr><td>Map picker</td><td>From a customer's Address cell in the review: search a place, click the map or drag the pin → Use this location (text + latitude / longitude). OpenStreetMap here; Google Maps / Places in the product (addendum-042)</td><td>Over the modal</td></tr>
+      <tr><td>Import menu</td><td>Product Master / Customer Management → Import: Select … File · <b>Smart import</b> (the modal for that page's step only) · Download Sample File (addendum-043)</td><td>Platform</td></tr>
+      <tr><td><a href="screens/activation.html#reset">#reset</a> · <a href="screens/activation.html#demo">#demo</a> · <a href="screens/activation.html#done">#done</a></td><td>Aids: a new owner (0 of 2) · products saved (1 of 2) · both done, with order 0001 pending (addendum-034)</td><td>—</td></tr>
+      <tr><td>under 1024 px</td><td>The lock: Set up your store on a computer · Copy link (addendum-032)</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Versions</h2>
+  <table>
+    <thead><tr><th>Version</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><a href="../activation-v1/index.html">activation-v1</a></td><td>Retired 10 Oct 2026 — frozen as published (addenda 003–030)</td></tr>
+    </tbody>
+  </table>
+</body>
+</html>
