@@ -10,20 +10,26 @@ const seedJs = (() => { const w = {}; new Function("window", fs.readFileSync(pat
 
 test("seed.js mirrors seed.json", () => assert.deepEqual(seedJs, seedJson));
 
-test("a new store: two steps (addendum-034), 0 of 2, the next step is items, nothing locked", () => {
+test("a new store: two steps (addendum-034), 0 of 2, the next step is items; customers locked until products are added (addendum-057)", () => {
   const s = E.initialState();
   assert.deepEqual(E.STEPS.map((st) => st.id), ["items", "customers"]);
   assert.deepEqual(E.progress(s), { done: 0, total: 2, score: 0, percent: 0 });
   assert.deepEqual(E.nextStep(s), { id: "items", mode: "start" });
   assert.equal(E.isLocked(s, "items"), false);
+  assert.equal(E.isLocked(s, "customers"), true);
+  assert.equal(E.lockNote(s, "customers"), "After you add your products");
+  s.items.sheet = [{ id: 1, name: "Salt 1 kg" }];   // products waiting in the sheet are not added yet
+  assert.equal(E.isLocked(s, "customers"), true);
+  s.items.saved = [{ id: 1 }];
   assert.equal(E.isLocked(s, "customers"), false);
+  assert.equal(E.lockNote(s, "customers"), "");
 });
 
-test("while products are processed, the next step moves on to customers; processed rows join the sheet to check", () => {
+test("while products are processed, customers stay locked and the next step waits; processed rows join the sheet to check", () => {
   const s = E.initialState();
   s.items.job = { kind: "file", startedAt: 1000, ms: 6000, sources: [{ kind: "file", label: "Rate list Oct.pdf" }], rows: [{ id: 1, name: "Salt 1 kg", unit: "bag" }, { id: 2, name: "Tea 250g", unit: "box" }] };
   assert.equal(E.isWaiting(s, "items"), true);
-  assert.deepEqual(E.nextStep(s), { id: "customers", mode: "start" });
+  assert.deepEqual(E.nextStep(s), { id: "items", mode: "waiting" });   // customers open only after products (addendum-057)
   const mid = E.jobProgress(s.items.job, 4000);   // halfway: stage 3 of 4, one product found so far; the same stages for every way
   assert.deepEqual([mid.stages[mid.stage], mid.found, mid.done], ["Finding products", 1, false]);
   assert.equal(E.tick(s, 3000), false);
@@ -33,6 +39,7 @@ test("while products are processed, the next step moves on to customers; process
   assert.deepEqual(E.nextStep(s), { id: "items", mode: "review" });   // only the owner can save them
   s.items.saved = s.items.sheet; s.items.sheet = [];
   assert.equal(E.isDone(s, "items"), true);
+  assert.deepEqual(E.nextStep(s), { id: "customers", mode: "start" });
 });
 
 test("the sheet: what needs a fix in the rate list, with one-tap fixes; one GST question for the whole list", () => {

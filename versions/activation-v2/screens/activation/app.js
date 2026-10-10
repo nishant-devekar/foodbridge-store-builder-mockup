@@ -1,5 +1,5 @@
 /* Store Activation discovery — activation-v2 (addenda 031–035). Desktop only: under 1024 px the CSS shows the lock.
-   The platform's shell (sidebar that ☰ opens and closes, top bar, profile menu, the assistant) around three pages:
+   The platform's shell (sidebar that ☰ opens and closes, top bar, profile menu) around three pages:
    the dashboard where the owner lands (addendum-033), Product Master and Customer Management (addendum-035), which stay
    empty until setup adds products and customers. Setup has two steps (addendum-034), done in one large modal: upload,
    review like a sheet, submit (addendum-036); its numbers and rules come from the engine.
@@ -8,7 +8,6 @@
   "use strict";
   var E = window.ActivationEngine, SEED = window.SEED;
   var KEY = "store-activation-discovery-v2-desktop";
-  var MASCOT = "activation/mascot.png";
   var app = document.getElementById("app");
 
   // ---------- state ----------
@@ -20,8 +19,8 @@
   function save() { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { /* the prototype still works for this tab */ } }
   var s = load();
   var ui = { menu: false, side: true, tab: "recent", note: "", pq: "", pcat: "", cq: "",
-    modal: null, pick: { items: null, customers: null }, reading: null, q: "", filter: "all", sel: null, flash: "", again: false,
-    panel: false, chat: [], combo: { hi: 0, items: [] } };
+    modal: null, pick: { items: null, customers: null }, bad: "", reading: null, q: "", filter: "all", sel: null, flash: "", again: false,
+    combo: { hi: 0, items: [] } };
 
   // discovery aids (addendum-034): #reset a new owner (0 of 2), #demo products saved (1 of 2), #done both done + an order
   function products() { return SEED.sources.zoho.rows.map(function (r, i) { var o = {}; Object.keys(r).forEach(function (k) { o[k] = r[k]; }); o.id = i + 1; o.taxIncl = "no"; return o; }); }
@@ -43,6 +42,7 @@
   function money(n) { return "₹ " + Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function norm(t) { return String(t || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
   var IC = {
+    lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
     menu: '<path d="M3 6h18M3 12h18M3 18h18"/>', chev: '<path d="M9 18l6-6-6-6"/>', down: '<path d="M6 9l6 6 6-6"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/>',
     tree: '<circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M5 8v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8M12 12v4"/>',
@@ -97,11 +97,6 @@
       "<span><b>Activate your store" + NEED + "</b><small>" + p.done + " of " + p.total + " · Next: " + esc(nextTitle(n)) + "</small></span>" + ic("chev", 16) + "</button>" : "";
     return '<div class="menu" role="menu">' + gs + soon("My Network", ic("tree", 18) + "My Network") + soon("Edit Profile", ic("gear", 18) + "Edit Profile") + soon("Logout", ic("logout", 18) + "Logout", "out") + "</div>";
   }
-  function fab(p, n) {
-    var face = '<img src="' + MASCOT + '" alt="">';
-    return '<button class="fab" data-act="panel" aria-label="FoodBridge assistant" aria-expanded="' + ui.panel + '">' + (n && !ui.panel ? '<span class="bub"><b>Activate your store:</b> ' + esc(nextTitle(n)) + "</span>" : "") +
-      ring(p.done < p.total ? p.percent : 0, 76, face, 5) + "</button>";
-  }
   function shell(page, title, body) {
     var p = E.progress(s), n = E.nextStep(s);
     var nav = PAGES.map(function (pg) {
@@ -116,12 +111,12 @@
       '<button class="me" data-act="menu" aria-expanded="' + ui.menu + '" aria-label="' + esc(SEED.store.owner) + (p.done < p.total ? ", store not active: " + p.done + " of " + p.total + " done" : "") + '">' + avatar(p) +
       "<span><b>" + esc(SEED.store.owner) + "</b><small>Admin</small></span></button>" + menu(p, n) + "</header>";
     var note = ui.note ? '<div class="note" role="status">' + esc(ui.note) + "</div>" : "";
-    return side + '<div class="main">' + head + '<div class="content">' + body + "</div></div>" + (ui.modal ? "" : assistantPanel() + fab(p, n)) + note + setupModal();
+    return side + '<div class="main">' + head + '<div class="content">' + body + "</div></div>" + note + setupModal();
   }
   // the empty table row on Product Master and Customer Management, until setup adds what belongs there
-  function emptyRow(cols, icon, what, step) {
+  function emptyRow(cols, icon, what, step, line, label) {
     return '<tr><td colspan="' + cols + '"><div class="blank"><span class="pic">' + ic(icon, 28) + "</span><b>No " + what + " yet</b>" +
-      "<span>They appear here when you activate your store.</span>" + '<button class="btn" data-act="setup" data-step="' + step + '">Add ' + what + "</button></div></td></tr>";
+      "<span>" + (line || "They appear here when you activate your store.") + "</span>" + '<button class="btn" data-act="setup" data-step="' + step + '">' + (label || "Add " + what) + "</button></div></td></tr>";
   }
   function pager(n) {
     return '<div class="pager"><span>Showing ' + (n ? "1–" + n : "0") + " of " + n + '</span><span class="pages">' + soon("Earlier pages", "‹", "pg") +
@@ -130,44 +125,6 @@
 
   // the banner's button names what it opens (addendum-037): add a step's file, or review the sheet waiting in it
   function actionLabel(n) { var what = n.id === "customers" ? "customers" : "products"; return (store(n.id).sheet.length ? "Review " : "Add ") + what; }
-
-  // ---------- the FoodBridge assistant: its own panel; setup is one of its answers (addendum-038) ----------
-  // It never does a step itself: every answer carries one button that opens the Activate your store modal or a page.
-  function nextButton() {
-    var n = E.nextStep(s);
-    return n ? { label: actionLabel(n), act: "setup", v: n.id } : { label: "View products", act: "view", v: "products" };
-  }
-  function answer(q) {
-    var t = String(q || "").toLowerCase(), id = E.topicFor(t);
-    if (/file|excel|xls|csv|pdf|format|upload|sheet/.test(t)) return { text: "Excel, CSV or PDF. One row per product or customer.", btn: nextButton() };
-    if (id) {
-      var what = id === "customers" ? "customers" : "products", st = store(id);
-      if (E.isDone(s, id) && !st.sheet.length) return { text: st.saved.length + " " + noun(id, st.saved.length) + " added.", btn: { label: "View " + what, act: "view", v: what } };
-      return { text: st.sheet.length ? "Your " + what + " file is waiting for a check." : "Upload your " + what + " file. I'll mark what needs fixing.", btn: { label: (st.sheet.length ? "Review " : "Add ") + what, act: "setup", v: id } };
-    }
-    return { text: "I can help you add products and customers.", btn: nextButton() };
-  }
-  function chatButton(b) { return '<button class="cbtn" data-act="' + b.act + '"' + (b.act === "setup" ? ' data-step="' + b.v + '"' : ' data-v="' + b.v + '"') + ">" + esc(b.label) + "</button>"; }
-  function assistantPanel() {
-    if (!ui.panel) return "";
-    var p = E.progress(s), n = E.nextStep(s);
-    var card = n
-      ? '<div class="acard">' + ring(p.percent, 48, frac(p, 13), 4) + '<span class="t"><b>Activate your store' + NEED + "</b><small>" + p.done + " of " + p.total + " · Next: " + esc(nextTitle(n)) + "</small></span>" + chatButton(nextButton()) + "</div>"
-      : '<div class="acard done"><span class="tick">' + ic("check", 20, 3) + '</span><span class="t"><b>Your store is active</b></span><span class="row">' + chatButton({ label: "View products", act: "view", v: "products" }) + chatButton({ label: "View customers", act: "view", v: "customers" }) + "</span></div>";
-    var msgs = ui.chat.map(function (m) {
-      return m.me ? '<div class="me">' + esc(m.text) + "</div>" : '<div class="bot"><span>' + esc(m.text) + "</span>" + (m.btn ? chatButton(m.btn) : "") + "</div>";
-    }).join("");
-    var sugg = [];
-    if (!E.isDone(s, "items")) sugg.push("Add products");
-    if (!E.isDone(s, "customers")) sugg.push("Add customers");
-    if (n) sugg.push("Which files work?");
-    var chips = sugg.length ? '<div class="sugg">' + sugg.map(function (q) { return '<button data-act="ask" data-q="' + esc(q) + '">' + esc(q) + "</button>"; }).join("") + "</div>" : "";
-    return '<section class="apanel" role="dialog" aria-label="FoodBridge assistant"><header><span class="aface"><img src="' + MASCOT + '" alt=""></span><b>FoodBridge assistant</b>' +
-      '<button class="iconbtn" data-act="panel" aria-label="Close the assistant">' + ic("x", 20) + "</button></header>" +
-      '<div class="abody" id="abody">' + card + msgs + "</div>" + chips +
-      '<form class="aask" data-form="ask"><input id="askin" placeholder="Ask anything" autocomplete="off" aria-label="Ask the assistant"><button type="submit" aria-label="Send">' + ic("send", 18) + "</button></form></section>";
-  }
-  function ask(q) { q = String(q || "").trim(); if (!q) return; ui.chat.push({ me: true, text: q }); var a = answer(q); ui.chat.push({ text: a.text, btn: a.btn }); }
 
   // ---------- the dashboard (addendum-033) ----------
   function dashboard() {
@@ -203,7 +160,8 @@
     };
     // Upload file only takes the sample's format, so the two sit together (addendum-045)
     var menu = open ? '<div class="impmenu" role="menu" aria-label="Import">' +
-      row("smartimport", "spark", "Smart import", "Any file, checked before saving", "smart") +
+      (E.isLocked(s, k) ? row("smartimport", "lock", "Smart import", E.lockNote(s, k), "smart locked", " disabled") :   // customers wait for products (addendum-057)
+        row("smartimport", "spark", "Smart import", "XLSX or CSV, checked before saving", "smart")) +
       '<hr role="separator"><div class="igroup" role="group" aria-label="Fixed format"><span class="ilabel">Fixed format</span>' +
       row("soon", "upload", "Upload file", "Same format as the sample", "", ' data-what="The platform\u2019s plain file import"') +
       row("samplefile", "import", "Sample file", "The format to upload") + "</div></div>" : "";
@@ -249,7 +207,7 @@
       '<div class="row">' + soon("Bulk Action", ic("edit", 16) + "Bulk Action" + ic("down", 14), "ghost") + soon("Adding a B2B customer", ic("plus", 16) + "B2B Customers", "btn") + "</div></section>";
     var tabs = '<div class="utabs" role="tablist"><button class="on" role="tab" aria-selected="true">B2B Customers</button>' + soon("Catalog Mapping", "Catalog Mapping") + "</div>";
     var search = '<label class="search card">' + ic("search", 16) + '<input data-bind="cq" placeholder="Search b2b customers..." autocomplete="off" value="' + esc(ui.cq) + '"' + (all.length ? "" : " disabled") + "></label>";
-    var body = !all.length ? emptyRow(7, "users", "customers", "customers") : rows.length ? rows.map(function (c) {
+    var body = !all.length ? (E.isLocked(s, "customers") ? emptyRow(7, "users", "customers", "items", "They appear here after you add your products.", "Add products") : emptyRow(7, "users", "customers", "customers")) : rows.length ? rows.map(function (c) {
       return '<tr><td class="ck"><input type="checkbox" aria-label="Select ' + esc(c.name) + '"></td><td>' + esc(c.name) + '</td><td' + (c.email ? ">" + esc(c.email) : ' class="soft">—') + '</td><td class="num">' + esc(c.phone) + "</td><td>" + (c.lat != null ? '<span class="gpin on" title="' + c.lat + ", " + c.lng + '">' + ic("pin", 14) + "</span>" : "") + esc(c.address || "—") +
         '</td><td><span class="pill st-violet">Default</span></td><td class="acts">' + soon("Customer offers", ic("gift", 18), "ia") + soon("Editing a customer", ic("edit", 18), "ia") + soon("Deleting a customer", ic("trash", 18), "ia") + "</td></tr>";
     }).join("") : '<tr><td colspan="7" class="empty">No customer matches “' + esc(ui.cq) + "”.</td></tr>";
@@ -266,9 +224,10 @@
   function other(k) { return k === "items" ? "customers" : "items"; }
   function openSetup(step) {
     var n = E.nextStep(s);
-    ui.modal = { step: step || (n ? n.id : "items") }; ui.menu = false; ui.q = ""; ui.filter = "all"; ui.sel = null; ui.again = false;
+    if (step && E.isLocked(s, step)) step = "items";   // a locked step opens the step it waits for (addendum-057)
+    ui.modal = { step: step || (n ? n.id : "items") }; ui.menu = false; ui.q = ""; ui.filter = "all"; ui.sel = null; ui.again = false; ui.bad = "";
   }
-  // the sample file stands in for an Excel or PDF file (not read in the prototype); categories arrive as names
+  // the sample file stands in for an XLSX file (not read in the prototype); categories arrive as names
   function sampleRows(k) {
     if (k === "customers") return SEED.sources.customersFile.rows;
     return SEED.sources.file.rows.map(function (r) { var o = {}; Object.keys(r).forEach(function (x) { o[x] = r[x]; }); o.category = r.category ? catName(r.category) : ""; return o; });
@@ -282,8 +241,12 @@
       ui.reading = null; ui.pick[k] = null; ui.q = ""; ui.filter = "all"; ui.sel = null; save(); render();
     }, 1600);
   }
+  // only XLSX and CSV are taken, for products and customers alike (addendum-058); anything else is refused by name
+  var FILE_OK = /\.(xlsx|csv)$/i;
   function pickFile(k, file) {
     if (!file) return;
+    if (!FILE_OK.test(file.name)) { ui.pick[k] = null; ui.bad = file.name; render(); return; }
+    ui.bad = "";
     var f = { name: file.name, size: file.size, rows: null };
     if (/\.csv$/i.test(file.name) && window.FileReader) {
       var rd = new FileReader();
@@ -298,8 +261,9 @@
     if (ui.modal.only) return '<header class="mh"><b>Smart import</b><span class="ctx">' + ic(k === "customers" ? "users" : "box", 15) + (k === "customers" ? "Customers" : "Products") + '</span><span class="grow"></span>' +
       '<button class="iconbtn" data-act="close" aria-label="Close">' + ic("x", 22) + "</button></header>";   // one page's step only (addendum-043)
     var tabs = STEP_TABS.map(function (t, i) {
-      var done = E.isDone(s, t[0]);
-      return '<button role="tab" aria-selected="' + (k === t[0]) + '" class="' + (k === t[0] ? "on" : "") + (done ? " done" : "") + '" data-act="step" data-v="' + t[0] + '"><i>' + (done ? ic("check", 13, 3.5) : i + 1) + "</i>" + t[1] + "</button>";
+      var done = E.isDone(s, t[0]), locked = E.isLocked(s, t[0]);   // Customers wait for products (addendum-057)
+      return '<button role="tab" aria-selected="' + (k === t[0]) + '" class="' + (k === t[0] ? "on" : "") + (done ? " done" : "") + (locked ? " locked" : "") + '" data-act="step" data-v="' + t[0] + '"' +
+        (locked ? ' disabled title="' + E.lockNote(s, t[0]) + '"' : "") + "><i>" + (done ? ic("check", 13, 3.5) : locked ? ic("lock", 12, 2.5) : i + 1) + "</i>" + t[1] + "</button>";
     }).join("");
     return '<header class="mh"><b>Activate your store</b><div class="seg" role="tablist">' + tabs + '</div><span class="grow"></span><span class="frac">' + p.done + "/" + p.total + "</span>" +
       '<button class="iconbtn" data-act="close" aria-label="Close">' + ic("x", 22) + "</button></header>";
@@ -307,10 +271,11 @@
   function uploadView(k) {
     var f = ui.pick[k];
     var drop = '<label class="drop" for="file-' + k + '"><span class="dico">' + ic(k === "customers" ? "users" : "box", 30) + "</span><b>Drop your " + (k === "customers" ? "customers" : "products") + " file</b>" +
-      '<span class="fmts"><i>XLSX</i><i>CSV</i><i>PDF</i></span><span class="pickbtn">Choose file</span></label>' +
-      '<input type="file" id="file-' + k + '" class="sr" accept=".xlsx,.xls,.csv,.pdf" data-file="' + k + '">';
+      '<span class="fmts"><i>XLSX</i><i>CSV</i></span><span class="pickbtn">Choose file</span></label>' +
+      '<input type="file" id="file-' + k + '" class="sr" accept=".xlsx,.csv" data-file="' + k + '">';
     var chip = f ? '<div class="fchip"><span class="fic">' + ic("file", 20) + "</span><b>" + esc(f.name) + "</b><span>" + kb(f.size) + "</span>" +
-      '<button class="iconbtn" data-act="unpick" aria-label="Remove the file">' + ic("x", 16) + "</button></div>" : "";
+      '<button class="iconbtn" data-act="unpick" aria-label="Remove the file">' + ic("x", 16) + "</button></div>" :
+      ui.bad ? '<div class="fbad" role="alert">' + ic("alert", 18) + "<span><b>" + esc(ui.bad) + "</b> can't be imported. Use an XLSX or CSV file.</span></div>" : "";
     return '<div class="mb center"><div class="upl">' + drop + chip + "</div></div>" +
       '<footer class="mf"><button class="link" data-act="sample">Try a sample file</button><span class="grow"></span><button class="btn" data-act="read"' + (f ? "" : " disabled") + ">Submit</button></footer>";
   }
@@ -416,7 +381,9 @@
         var dd = !!E.colOptions(k, c.key, r, st.sheet);
         if (dd) cls += " dd";
         if (ui.sel && ui.sel.r === r.id && ui.sel.c === c.key) return '<td class="sel ' + cls + '">' + cellEditor(k, c, r, v, n) + "</td>";
-        return '<td class="' + cls + '" data-act="cell" data-r="' + r.id + '" data-c="' + c.key + '"' + (ci.length ? ' title="' + esc(ci.map(function (x) { return x.msg; }).join(" · ")) + '"' : "") + ">" +
+        // the corner mark carries the cell's notes, shown on hover like a sheet's comment (addendum-059)
+        var note = ci.length ? '<i class="cnote" data-tip="' + esc(ci.map(function (x) { return x.msg; }).join("\n")) + '" data-lv="' + cl + '" aria-label="' + esc(ci.map(function (x) { return x.msg; }).join(". ")) + '"></i>' : "";
+        return '<td class="' + cls + '" data-act="cell" data-r="' + r.id + '" data-c="' + c.key + '">' + note +
           (dd ? '<i class="caret" aria-hidden="true"></i>' : "") + (c.geo ? '<span class="gpin' + (r.lat != null ? " on" : "") + '"' + (r.lat != null ? ' title="' + r.lat + ", " + r.lng + '"' : "") + ">" + ic("pin", 14) + "</span>" : "") + esc(cellText(c, v)) + "</td>";
       }).join("") + "</tr>";
     }).join("") || '<tr><th class="rn"></th><td colspan="' + cols.length + '" class="none">Nothing here</td></tr>';
@@ -588,24 +555,21 @@
     },
     // the Import menu (addendum-043)
     imp: function (el) { var v = el.getAttribute("data-v"); ui.imp = ui.imp === v ? null : v; ui.impFocus = !!ui.imp; },
-    smartimport: function (el) { var k = el.getAttribute("data-step"); ui.imp = null; ui.panel = false; ui.modal = { step: k, only: true }; ui.q = ""; ui.filter = "all"; ui.sel = null; ui.again = false; },
+    smartimport: function (el) { var k = el.getAttribute("data-step"); if (E.isLocked(s, k)) return; ui.imp = null; ui.modal = { step: k, only: true }; ui.bad = ""; ui.q = ""; ui.filter = "all"; ui.sel = null; ui.again = false; },
     samplefile: function (el) {
       var k = el.getAttribute("data-step"), a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([E.sampleCSV(k)], { type: "text/csv" })); a.download = (k === "customers" ? "customers" : "products") + "-sample.csv";
       document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0); ui.imp = null;
     },
-    // the assistant's panel (addendum-038)
-    panel: function () { ui.panel = !ui.panel; },
-    ask: function (el) { ask(el.getAttribute("data-q")); },
     // the setup modal (addendum-036)
-    setup: function (el) { ui.panel = false; openSetup(el.getAttribute("data-step")); },
+    setup: function (el) { openSetup(el.getAttribute("data-step")); },
     close: function () { commitCell(); closePicker(); ui.modal = null; ui.sel = null; },
-    step: function (el) { commitCell(); ui.modal.step = el.getAttribute("data-v"); ui.modal.picked = true; ui.modal.more = null; ui.q = ""; ui.filter = "all"; ui.sel = null; ui.again = false; },
-    sample: function () { var k = ui.modal.step, f = k === "customers" ? SEED.sources.customersFile : SEED.sources.file; ui.pick[k] = { name: f.label.replace(/\.pdf$/, ".xlsx"), size: 48 * 1024, rows: null }; },
-    unpick: function () { ui.pick[ui.modal.step] = null; },
+    step: function (el) { if (E.isLocked(s, el.getAttribute("data-v"))) return; commitCell(); ui.modal.step = el.getAttribute("data-v"); ui.modal.picked = true; ui.modal.more = null; ui.bad = ""; ui.q = ""; ui.filter = "all"; ui.sel = null; ui.again = false; },
+    sample: function () { var k = ui.modal.step, f = k === "customers" ? SEED.sources.customersFile : SEED.sources.file; ui.pick[k] = { name: f.label.replace(/\.pdf$/, ".xlsx"), size: 48 * 1024, rows: null }; ui.bad = ""; },
+    unpick: function () { ui.pick[ui.modal.step] = null; ui.bad = ""; },
     read: function () { startReading(ui.modal.step); },
     more: function () { ui.pick[ui.modal.step] = null; ui.modal.more = ui.modal.step; ui.modal.finished = false; },
-    view: function (el) { ui.modal = null; ui.sel = null; ui.panel = false; location.hash = "#" + el.getAttribute("data-v"); },
+    view: function (el) { ui.modal = null; ui.sel = null; location.hash = "#" + el.getAttribute("data-v"); },
     filter: function (el) { commitCell(); ui.filter = el.getAttribute("data-v"); ui.sel = null; },
     combopick: function (el) { if (comboPick(Number(el.getAttribute("data-i")))) ui.sel = null; },
     cell: function (el) {
@@ -666,15 +630,10 @@
     if (ev.target.getAttribute("data-file")) pickFile(ev.target.getAttribute("data-file"), ev.target.files[0]);
     if (ev.target.id === "cell" && ev.target.tagName === "SELECT") { commitCell(); render(); }   // a dropdown's pick saves at once (addendum-039)
   });
-  app.addEventListener("submit", function (ev) {
-    if (ev.target.getAttribute("data-form") !== "ask") return;
-    ev.preventDefault(); ask(document.getElementById("askin").value); render();
-    var i = document.getElementById("askin"); if (i) i.focus();
-  });
   // the Import menu's keys (addendum-044): ↑ ↓ move between its rows
   app.addEventListener("keydown", function (ev) {
     var m = ev.target.closest && ev.target.closest(".impmenu"); if (!m || (ev.key !== "ArrowDown" && ev.key !== "ArrowUp")) return;
-    ev.preventDefault(); var rows = [].slice.call(m.querySelectorAll(".irow")), i = rows.indexOf(ev.target);
+    ev.preventDefault(); var rows = [].slice.call(m.querySelectorAll(".irow:not([disabled])")), i = rows.indexOf(ev.target);
     rows[(i + (ev.key === "ArrowDown" ? 1 : -1) + rows.length) % rows.length].focus();
   });
   // the sheet's keys: Enter ↓, Tab →, arrows move, Esc undoes the typing
@@ -712,15 +671,32 @@
     if (ev.key !== "Escape") return;
     if (PICK) { ev.stopPropagation(); closePicker(); render(); return; }
     if (ui.imp) { var back = ui.imp; ui.imp = null; render(); var ib = app.querySelector('.imp[data-v="' + back + '"]'); if (ib) ib.focus(); } else if (ui.menu) { ui.menu = false; render(); } else if (ui.modal && ev.target.id !== "cell") { ui.modal = null; ui.sel = null; render(); }
-    else if (ui.panel) { ui.panel = false; render(); }
   });
+
+  // the corner's tooltip (addendum-059): one floating card outside the app, so the sheet's scrolling and clipping never cut it
+  var TIP = document.createElement("div"); TIP.className = "ctip"; TIP.setAttribute("role", "tooltip"); TIP.hidden = true; document.body.appendChild(TIP);
+  function hideTip() { TIP.hidden = true; }
+  function showTip(m) {
+    var lines = m.getAttribute("data-tip").split("\n"), fix = m.getAttribute("data-lv") === "fix";
+    TIP.className = "ctip " + (fix ? "fix" : "check");
+    TIP.innerHTML = "<b>" + (fix ? "Needs fix" : "Check") + "</b>" + lines.map(function (l) { return "<span>" + esc(l) + "</span>"; }).join("");
+    TIP.hidden = false;
+    var rc = m.getBoundingClientRect(), w = TIP.offsetWidth, h = TIP.offsetHeight;
+    var left = Math.min(rc.right + 6, window.innerWidth - w - 8), top = rc.top;
+    if (left < rc.right) left = Math.max(8, rc.left - w - 6);   // no room on the right: open to the left of the corner
+    if (top + h > window.innerHeight - 8) top = window.innerHeight - h - 8;
+    TIP.style.left = left + "px"; TIP.style.top = top + "px";
+  }
+  app.addEventListener("mouseover", function (ev) { var m = ev.target.closest && ev.target.closest(".cnote"); if (m) showTip(m); });
+  app.addEventListener("mouseout", function (ev) { if (ev.target.closest && ev.target.closest(".cnote")) hideTip(); });
+  app.addEventListener("scroll", hideTip, true);
 
   var VIEWS = { dashboard: [dashboard, "Dashboard"], products: [productsPage, "Finished Goods"], customers: [customersPage, "B2B Customers"] };
   function route() { var r = (location.hash || "#dashboard").slice(1); return AIDS[r] || VIEWS[r] ? r : "dashboard"; }
   var rendering = false;
   function render() {
     var r = route();
-    if (AIDS[r]) { AIDS[r](); save(); ui.modal = null; ui.panel = false; ui.chat = []; location.replace("#dashboard"); return; }
+    if (AIDS[r]) { AIDS[r](); save(); ui.modal = null; location.replace("#dashboard"); return; }
     rendering = true;
     var sh = document.getElementById("sheet"), sx = sh ? sh.scrollLeft : 0, sy = sh ? sh.scrollTop : 0;
     app.innerHTML = VIEWS[r][0]();
@@ -740,8 +716,8 @@
       cb.style.left = rc.left + "px"; cb.style.minWidth = Math.max(rc.width, 220) + "px";
       if (below) { cb.style.top = rc.bottom + 2 + "px"; cb.style.bottom = "auto"; } else { cb.style.bottom = window.innerHeight - rc.top + 2 + "px"; cb.style.top = "auto"; }
     }
-    var ab = document.getElementById("abody"); if (ab) ab.scrollTop = ab.scrollHeight;   // a chat opens on its newest message
-    var firstRow = ui.imp && ui.impFocus ? app.querySelector(".impmenu .irow") : null; if (firstRow) firstRow.focus(); ui.impFocus = false;   // the menu opens on Smart import
+    var firstRow = ui.imp && ui.impFocus ? app.querySelector(".impmenu .irow:not([disabled])") : null; if (firstRow) firstRow.focus(); ui.impFocus = false;   // the menu opens on Smart import
+    hideTip();
     ui.selectAll = false; ui.openPick = false; rendering = false;
   }
   window.addEventListener("hashchange", function () { ui.menu = false; render(); window.scrollTo(0, 0); });

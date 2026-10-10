@@ -53,7 +53,7 @@ button { font: inherit; }
 .menu .gs > svg { color: var(--mut); }
 .menu .out { color: #dc2626; }
 
-.content { display: flex; flex-direction: column; gap: 20px; padding: 24px 24px 120px; }   /* room under the page for the assistant */
+.content { display: flex; flex-direction: column; gap: 20px; padding: 24px; }
 .banner { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: var(--white); border: 2px solid var(--g); border-radius: 14px; }
 .banner .t { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 .banner .t b { font-size: 17px; }
@@ -79,11 +79,6 @@ button { font: inherit; }
 .pill { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 13px; font-weight: 500; }
 .st-amber { background: #fef3c7; color: #b45309; } .st-blue { background: #dbeafe; color: #1d4ed8; } .st-ok { background: var(--gl); color: var(--gd); }
 
-.fab { position: fixed; right: 28px; bottom: 28px; z-index: 25; display: flex; align-items: center; gap: 12px; border: 0; background: none; padding: 0; cursor: pointer; }
-.fab .bub { padding: 10px 14px; background: var(--white); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 4px 14px rgba(17,24,39,.1); font-size: 14px; color: var(--ink); }
-.fab .ring { box-shadow: 0 8px 22px rgba(17,24,39,.2); }
-.fab .ring > span { background: #ffedd5; }
-.fab img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%; }
 .note { position: fixed; left: 50%; bottom: 28px; z-index: 40; transform: translateX(-50%); padding: 10px 16px; border-radius: 10px; background: var(--gdd); color: #fff; font-size: 14px; box-shadow: 0 8px 24px rgba(17,24,39,.2); }
 
 /* under 1024 px the page is locked (addendum-032) */
@@ -224,38 +219,12 @@ table.sheet thead th.rn { z-index: 3; cursor: default; }
 table.sheet th.rn.fix { box-shadow: inset 4px 0 0 #dc2626; } table.sheet th.rn.check { box-shadow: inset 4px 0 0 #d97706; }
 table.sheet td { cursor: cell; background: var(--white); }
 table.sheet td.num { text-align: right; font-variant-numeric: tabular-nums; }
-table.sheet td.fix { background: linear-gradient(225deg, #dc2626 0 6px, transparent 6px), #fef2f2; }   /* a corner mark, as a sheet's comment */
-table.sheet td.check { background: linear-gradient(225deg, #d97706 0 6px, transparent 6px), #fffbeb; }
+table.sheet td.fix { position: relative; background: #fef2f2; }
+table.sheet td.check { position: relative; background: #fffbeb; }
 table.sheet td.sel { padding: 0; outline: 2px solid #1a73e8; outline-offset: -2px; position: relative; z-index: 1; }
 table.sheet td.sel input { width: 100%; height: 34px; padding: 0 10px; border: 0; outline: 0; background: transparent; font: inherit; font-size: 14px; }
 table.sheet tr.rsel td, table.sheet tr.rsel th.rn { background: #e8f0fe; }
 table.sheet td.none { text-align: center; color: var(--mut); cursor: default; height: 80px; }
-
-/* ---------- the FoodBridge assistant's panel (addendum-038) ---------- */
-.apanel { position: fixed; right: 28px; bottom: 120px; z-index: 30; width: 380px; height: min(560px, calc(100vh - 160px)); display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 24px 60px rgba(17,24,39,.22); overflow: hidden; }
-.apanel header { flex: none; height: 60px; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px; border-bottom: 1px solid var(--line); }
-.apanel header b { flex: 1; font-size: 15px; }
-.aface { width: 36px; height: 36px; flex: none; border-radius: 50%; overflow: hidden; background: #ffedd5; }
-.aface img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%; }
-.abody { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #f9fafb; }
-.acard { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px 12px; padding: 14px; background: var(--white); border: 1px solid var(--line); border-radius: 14px; }
-.acard .t { display: flex; flex-direction: column; gap: 2px; }
-.acard .t b { font-size: 15px; }
-.acard .t small { font-size: 13px; color: var(--sub); }
-.acard > .cbtn { grid-column: 1 / -1; }
-.acard.done .tick { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--g); color: #fff; }
-.acard.done .row { grid-column: 1 / -1; display: flex; gap: 8px; }
-.acard.done .row .cbtn { flex: 1; }
-.cbtn { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; padding: 0 16px; border: 0; border-radius: 10px; background: var(--g); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
-.cbtn:hover { background: var(--gd); }
-.bot { align-self: flex-start; max-width: 300px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--white); border: 1px solid var(--line); border-radius: 14px 14px 14px 4px; font-size: 14px; line-height: 20px; }
-.me { align-self: flex-end; max-width: 260px; padding: 9px 12px; background: var(--gl); border-radius: 14px 14px 4px 14px; font-size: 14px; line-height: 20px; }
-.sugg { flex: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px 0; }
-.sugg button { min-height: 32px; padding: 0 12px; border: 1px solid #bbf7d0; border-radius: 16px; background: var(--gl2); color: var(--gd); font-size: 13px; font-weight: 600; cursor: pointer; }
-.sugg button:hover { background: var(--gl); }
-.aask { flex: none; display: flex; align-items: center; gap: 8px; margin: 10px 12px 12px; padding: 4px 4px 4px 14px; border: 1px solid var(--line); border-radius: 24px; }
-.aask input { flex: 1; min-width: 0; border: 0; outline: 0; font: inherit; font-size: 14px; }
-.aask button { width: 36px; height: 36px; border: 0; border-radius: 50%; display: grid; place-items: center; background: var(--g); color: #fff; cursor: pointer; }
 
 /* ---------- the review sheet's dropdown columns (addendum-039) ---------- */
 table.sheet td.dd { padding-right: 24px; position: relative; }
@@ -338,12 +307,8 @@ table.sheet td.sel:has(.mapbtn) input { padding-right: 40px; }
 .menu .gs:hover { background: #fef3c7; }
 .menu .gs small { color: #92400e; }
 .menu .gs .need { margin-left: 6px; }
-.acard .need { margin-left: 0; margin-top: 2px; align-self: flex-start; }
-.acard .t b { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.acard:not(.done) { border-color: #fcd34d; background: #fffdf5; }
 .avwrap { position: relative; display: inline-grid; }
 .duedot { position: absolute; top: 0; right: 0; width: 12px; height: 12px; border-radius: 50%; background: #f59e0b; border: 2px solid var(--white); }
-.fab .bub b { color: #92400e; }
 .menu { width: 336px; }
 .menu .gs b { white-space: nowrap; }
 
@@ -385,3 +350,28 @@ table.sheet td.sel:has(.mapbtn) input { padding-right: 40px; }
 /* ---------- the activation card takes the tag's amber (addendum-052) ---------- */
 .acta { border-color: #fcd34d; background: #fffbeb; box-shadow: 0 1px 2px rgba(146,64,14,.06); }
 .acta .tagw { background: #fef3c7; }
+
+/* Customers wait for products (addendum-057): the modal's tab and Smart import on Customer Management, locked */
+.seg button.locked { color: #9ca3af; cursor: not-allowed; }
+.seg button.locked i { background: #f3f4f6; color: #9ca3af; }
+.irow.locked { cursor: not-allowed; }
+.irow.locked .itile, .irow.smart.locked:hover .itile { background: #f3f4f6; color: #9ca3af; }
+.irow.locked .itxt b { color: #9ca3af; }
+.irow.locked .itxt em { background: #f3f4f6; color: #9ca3af; }
+.irow.locked:hover { background: none; }
+
+/* a file that is not XLSX or CSV is refused by name (addendum-058) */
+.fbad { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #fecaca; border-radius: 12px; background: #fef2f2; color: #b91c1c; font-size: 14px; }
+.fbad svg { flex: none; }
+.fbad b { font-weight: 600; word-break: break-all; }
+
+/* the corner mark, as a sheet's comment: hover it for the cell's notes (addendum-059) */
+table.sheet .cnote { position: absolute; top: 0; right: 0; z-index: 1; width: 16px; height: 16px; cursor: help; }
+table.sheet .cnote::after { content: ""; position: absolute; top: 0; right: 0; border-style: solid; border-width: 0 7px 7px 0; border-color: transparent #dc2626 transparent transparent; }
+table.sheet .cnote[data-lv="check"]::after { border-right-color: #d97706; }
+table.sheet .cnote:hover::after { border-width: 0 9px 9px 0; }
+.ctip { position: fixed; z-index: 70; max-width: 280px; display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; background: var(--white); border: 1px solid var(--line); border-left: 3px solid #dc2626; border-radius: 8px; box-shadow: 0 8px 24px rgba(17,24,39,.16); font-size: 13px; line-height: 18px; color: var(--ink); pointer-events: none; white-space: normal; }
+.ctip[hidden] { display: none; }
+.ctip.check { border-left-color: #d97706; }
+.ctip b { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #b91c1c; }
+.ctip.check b { color: #b45309; }

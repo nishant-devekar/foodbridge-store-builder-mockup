@@ -9,10 +9,11 @@
   "use strict";
 
   // The two steps the owner sees (addendum-034). Weights give the team's 0–100 score; the owner only ever sees "n of 2".
+  // Customers open once products are added: step 1 done, at least one product saved (addendum-057).
   // Orders, delivery, payment and the daily plan are ordinary use of the platform after setup, not activation steps.
   var STEPS = [
     { id: "items",     title: "Add your products",  time: "2 min",  weight: 50, needs: [] },
-    { id: "customers", title: "Add your customers", time: "30 sec", weight: 50, needs: [] }
+    { id: "customers", title: "Add your customers", time: "30 sec", weight: 50, needs: ["items"] }
   ];
 
   function initialState() {
@@ -47,7 +48,8 @@
     return id === "items" && !!s.items.job && !isDone(s, "items");
   }
 
-  function lockNote() { return ""; }   // neither step waits for the other (addendum-034)
+  /** What a locked step waits for, in the owner's words (addendum-057). */
+  function lockNote(s, id) { return isLocked(s, id) ? "After you add your products" : ""; }
 
   function progress(s) {
     var done = STEPS.filter(function (st) { return isDone(s, st.id); });
