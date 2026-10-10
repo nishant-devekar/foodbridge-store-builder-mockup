@@ -22,7 +22,7 @@
     return { menu: false, panel: false, sheet: false, chat: [], draft: null, ticked: null, dmode: "driver", driverId: null, note: "",
       files: [], photos: [], shoot: { live: false, scene: 0, note: "" }, zoho: "idle", voice: { text: "", on: false }, cat: { q: "", picked: {}, hi: -1, focused: false },
       sel: null, filter: "all", undo: [], reveal: false, focusFx: null, drag: false, dropAsk: false,
-      view: null, rmenu: false, fixing: false, fixSkip: {}, fixTotal: 0, edit: null, snack: "", pq: "", pcat: null };
+      view: null, rmenu: false, fixing: false, fixSkip: {}, fixTotal: 0, edit: null, snack: "", pq: "", pcat: null, gopen: null };
   }
   var ui = freshUi();
 
@@ -61,6 +61,12 @@
     shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
     dots: '<circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/>',
     lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    shop: '<path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M9 20v-6h6v6"/><path d="M3 9h18"/>',
+    box: '<path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/>',
+    cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 7H6"/>',
+    truck: '<path d="M1 4h14v12H1z"/><path d="M15 9h4l3 3v4h-7"/><circle cx="6" cy="18.5" r="2"/><circle cx="18" cy="18.5" r="2"/>',
+    rupee: '<path d="M6 3h12M6 8h12M6 13l8.5 8M6 13h3c6.7 0 6.7-10 0-10"/>',
+    chat: '<path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.7A8.4 8.4 0 1 1 21 11.5z"/>',
     download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/>',
     pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'
   };
@@ -171,15 +177,17 @@
     return T[n.id];
   }
 
-  // What a done step says on Getting started (addendum-022): what the owner did, in a few words.
-  function doneWords(id) {
+  // What a done step says on Getting started (addendum-026): what the owner did, as a title.
+  function doneTitle(id) {
+    var n;
     switch (id) {
-      case "items": return s.items.saved.length + " product" + (s.items.saved.length === 1 ? "" : "s");
-      case "customers": return s.customers.ids.length + " customer" + (s.customers.ids.length === 1 ? "" : "s");
-      case "order": return "First order · " + rupees(s.order.total);
-      case "deliver": return s.delivery.status === "delivered" ? "Delivered" : "With your driver";
+      case "store": return "Store created";
+      case "items": n = s.items.saved.length; return n + " product" + (n === 1 ? "" : "s") + " added";
+      case "customers": n = s.customers.ids.length; return n + " customer" + (n === 1 ? "" : "s") + " added";
+      case "order": return "First order taken · " + rupees(s.order.total);
+      case "deliver": return s.delivery.status === "delivered" ? "Delivered" : "Sent with your driver";
       case "paid": return s.payment.received ? "Paid" : "Payment link sent";
-      case "plan": return "Mornings at " + clock(s.plan.morning);
+      case "plan": return "Daily plan is on";
     }
     return "";
   }
@@ -187,35 +195,79 @@
   // ---------- screens ----------
   var V = {};
 
-  // Getting started (addendum-022): every step and where it stands — done, next, processing, or waiting on another.
+  // Getting started (addendum-026): the goal is the first sale, in three short stages, and only the current stage shows.
+  // The store itself counts as done — it was made in the WhatsApp chat. One step is open: a picture, one sentence, one button.
+  var STAGES = [
+    { title: "Ready to take orders", short: "Ready to sell", icon: "shop", steps: ["store", "items", "customers"] },
+    { title: "Your first sale", short: "First sale", icon: "cart", steps: ["order", "deliver", "paid"] },
+    { title: "Your daily plan", short: "Daily plan", icon: "chat", steps: ["plan"] }
+  ];
+  var STEP_UI = {   // the current step opens with one short line and a button named for the action (addendum-028)
+    store: { icon: "shop", title: "Store created" },
+    items: { icon: "box", title: "Add your products", href: "#products", say: "Rate list, photos or voice. We type it.", act: "Add products" },
+    customers: { icon: "users", title: "Add your customers", href: "#customers", say: "Pick shops from your phone contacts.", act: "Add customers" },
+    order: { icon: "cart", title: "Take your first order", href: "#order", say: "Book an order for one customer.", act: "Take order" },
+    deliver: { icon: "truck", title: "Deliver it", href: "#deliver", say: "By your driver, or mark it delivered.", act: "Deliver" },
+    paid: { icon: "rupee", title: "Get paid", href: "#paid", say: "Send a UPI link, or note cash.", act: "Get paid" },
+    plan: { icon: "chat", title: "Daily plan on WhatsApp", href: "#plan", say: "A morning plan and an evening summary.", act: "Turn it on" }
+  };
+  function gDone(id) { return id === "store" || E.isDone(s, id); }
+  function gOpenable(id) { return !gDone(id) && !E.isLocked(s, id) && !E.isWaiting(s, id); }
+  function lowerFirst(t) { return t.charAt(0).toLowerCase() + t.slice(1); }
+  function andList(a) { return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
+
+  // Getting started (addendum-028): a stage tracker, then the stage as a setup guide — the current step open (icon, one
+  // short line, a named button), the others one row each.
   V.home = function () {
-    var p = E.progress(s), n = E.nextStep(s);
+    var n = E.nextStep(s);
     if (!n) { location.replace("#done"); return ""; }
     if (s.assist) { s.assist = null; save(); }   // the assistant brought the owner back; its message has done its job
-    var fresh = p.done === 0 && !s.items.job && !s.items.sheet.length;
-    var t = fresh ? title("Namaste " + SEED.store.owner + " ji, your store in 6 quick steps")
-      : title(p.done >= 2 && !E.isDone(s, "order") ? "Your store is ready for orders" : "Getting started");
-    var sum = '<div class="gsum">' + ring(p.percent, 56, frac(p.done, 14), 5) + "<span><b>" + p.done + " of 6 done</b><small>" + (6 - p.done) + " to go</small></span></div>";
-    var x = nextText(n);
-    var rows = E.STEPS.map(function (st) {
-      var num = E.stepNumber(st.id);
-      if (st.id === n.id) {
-        var mark = n.mode === "waiting" ? '<i><span class="spin light"></span></i>' : "<i>" + num + "</i>";
-        return '<div class="st next">' + '<div class="row">' + mark + '<span class="t"><small>Next step</small>' + esc(x.title) + "</span></div>" +
-          '<a class="btn" href="' + x.href + '">' + esc(x.label) + "</a></div>";
+    var si = 0; while (si < STAGES.length - 1 && STAGES[si].steps.every(gDone)) si++;
+    var stage = STAGES[si], left = stage.steps.filter(function (id) { return !gDone(id); });
+    var head = si === 0 ? left.length + " step" + (left.length === 1 ? "" : "s") + " and you can take orders"
+      : si === 1 ? (E.isDone(s, "order") ? "Now " + andList(left.map(function (id) { return lowerFirst(STEP_UI[id].title); })) : "You can take orders now")
+      : "Last step: your daily plan";
+
+    // the milestone track (addendum-029): reached = tick, current = a ring filling with its stage, ahead = grey;
+    // the road behind is green and the road to the next milestone fills with the current stage
+    var pctNow = Math.round((stage.steps.length - left.length) / stage.steps.length * 100);
+    var lane = "", lbls = "";
+    STAGES.forEach(function (g, i) {
+      var st = i < si ? "done" : i === si ? "on" : "";
+      lane += i < si ? '<span class="node done">' + ic("check", 16, 3.5) + "</span>"
+        : i === si ? '<span class="node on" aria-current="step" style="background:conic-gradient(var(--g) 0 ' + pctNow + '%, var(--gl) ' + pctNow + '% 100%)"><span>' + ic(g.icon, 20) + "</span></span>"
+        : '<span class="node">' + ic(g.icon, 16) + "</span>";
+      if (i < STAGES.length - 1) lane += '<span class="road"><i style="width:' + (i < si ? 100 : i === si ? pctNow : 0) + '%"></i></span>';
+      lbls += '<span class="' + st + '">' + esc(g.short) + "</span>";
+    });
+    var track = '<div class="gtrack" role="img" aria-label="' + esc(stage.short) + ": " + (stage.steps.length - left.length) + " of " + stage.steps.length + ' done">' +
+      '<div class="lane">' + lane + '</div><div class="lbls">' + lbls + "</div></div>";
+
+    // the current step: the one the owner tapped, else the first that can be done now
+    var cur = ui.gopen && stage.steps.indexOf(ui.gopen) >= 0 && gOpenable(ui.gopen) ? ui.gopen : stage.steps.filter(gOpenable)[0];
+    var rows = stage.steps.map(function (id) {
+      var u = STEP_UI[id];
+      if (gDone(id)) {
+        var t = doneTitle(id), link = id === "items" ? "#products" : "";
+        if (id === "items" && s.items.job) { t += " · reading more"; link = "#processing"; }
+        else if (id === "items" && s.items.sheet.length) { link = "#review"; }
+        var inner = '<span class="gi ok">' + ic("check", 18, 3) + "</span><span class=\"t\">" + esc(t) + "</span>" + (link ? ic("chev", 18) : "");
+        return link ? '<a class="sgr done" href="' + link + '">' + inner + "</a>" : '<div class="sgr done">' + inner + "</div>";
       }
-      if (E.isDone(s, st.id)) {
-        var words = doneWords(st.id), href = st.id === "items" ? "#products" : "";
-        if (st.id === "items" && s.items.job) { words += " · processing more"; href = "#processing"; }
-        else if (st.id === "items" && s.items.sheet.length) { var later = E.sheetSummary(s.items.sheet, s.items.saved); words += " · " + (later.fix ? later.fix + " to fix" : later.total + " not saved"); href = "#review"; }
-        var inner = "<i>" + ic("check", 16, 3) + '</i><span class="t">' + esc(st.title) + "<small>" + esc(words) + "</small></span>" + (href ? ic("chev", 18) : "");
-        return href ? '<a class="st done" href="' + href + '">' + inner + "</a>" : '<div class="st done">' + inner + "</div>";
+      if (E.isWaiting(s, id)) return '<a class="sgr" href="#processing"><span class="gi"><span class="spin"></span></span><span class="t">Reading your products…</span>' + ic("chev", 18) + "</a>";
+      if (id === cur) {
+        var review = id === "items" && s.items.sheet.length, sum = review ? E.sheetSummary(s.items.sheet, s.items.saved) : null;
+        var say = review ? (sum.fix ? sum.fix + " product" + (sum.fix === 1 ? " needs" : "s need") + " a fix, then save." : sum.total + " products ready to save.") : u.say;
+        return '<div class="sgr cur"><span class="gi">' + ic(u.icon, 20) + '</span><div class="t"><b>' + esc(u.title) + "</b><p>" + esc(say) + "</p>" +
+          '<a class="sgo" href="' + (review ? "#review" : u.href) + '">' + esc(review ? "Check & save" : u.act) + ic("chev", 16, 2.5) + "</a></div></div>";
       }
-      if (E.isWaiting(s, st.id)) return '<a class="st proc" href="#processing"><i><span class="spin"></span></i><span class="t">' + esc(st.title) + "<small>Processing…</small></span>" + ic("chev", 18) + "</a>";
-      var lock = E.isLocked(s, st.id);
-      return '<div class="st' + (lock ? " lock" : "") + '"><i>' + num + '</i><span class="t">' + esc(st.title) + (lock ? "<small>" + esc(E.lockNote(s, st.id)) + "</small>" : "") + "</span></div>";
+      if (gOpenable(id)) return '<button class="sgr" data-act="gopen" data-v="' + id + '"><span class="gi">' + ic(u.icon, 18) + '</span><span class="t">' + esc(u.title) + "</span>" + ic("chev", 18) + "</button>";
+      return '<div class="sgr later"><span class="gi">' + ic(u.icon, 18) + '</span><span class="t">' + esc(u.title) + "</span></div>";
     }).join("");
-    return phone(appHead() + '<div class="body">' + flashHtml() + t + sum + '<div class="steps">' + rows + "</div>" + '<div style="height:70px;flex:none"></div></div>', fab() + panel());
+    var done = stage.steps.length - left.length;
+    var card = '<section class="sg"><header><b>' + esc(stage.title) + "</b><span>" + (stage.steps.length === 1 ? "Last step" : done + " of " + stage.steps.length + " done") + "</span></header>" + rows + "</section>";
+    return phone(appHead() + '<div class="body sgbody">' + flashHtml() + '<div class="title"><small class="kick">Getting started</small><h1>' + esc(head) + "</h1></div>" + track + card +
+      '<div style="height:70px;flex:none"></div></div>', fab() + panel());
   };
 
   // ---------- the platform's Products page (addendum-022) ----------
@@ -1068,6 +1120,7 @@
   }
   var ACT = {
     noop: function () {},
+    gopen: function (el) { ui.gopen = el.getAttribute("data-v"); },
     pcat: function (el) { ui.pcat = el.getAttribute("data-v") || null; },
     assistoff: function () { s.assist = null; },
     menu: function () { ui.menu = !ui.menu; },

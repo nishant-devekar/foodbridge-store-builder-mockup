@@ -16,6 +16,7 @@ test("a new store: 0 of 6, the next step is items, order is locked", () => {
   assert.deepEqual(E.nextStep(s), { id: "items", mode: "start" });
   assert.equal(E.isLocked(s, "order"), true);
   assert.equal(E.lockNote(s, "deliver"), "after your first order");
+  assert.equal(E.lockNote(s, "order"), "after products and customers");
 });
 
 test("while products are processed, the next step moves on to customers; processed rows join the sheet to check", () => {
@@ -136,4 +137,12 @@ test("the assistant maps questions to steps, and nothing else", () => {
   assert.equal(E.topicFor("udhaar kaise collect karein"), "paid");
   assert.equal(E.topicFor("change a price"), "items");
   assert.equal(E.topicFor("hello"), null);
+});
+
+test("the first order's lock names only what is still missing (addendum-025)", () => {
+  const s = E.initialState();
+  s.items.saved = [{ id: 1, name: "Salt 1 kg" }];
+  assert.equal(E.lockNote(s, "order"), "after your customers");
+  s.items.saved = []; s.customers.done = true;
+  assert.equal(E.lockNote(s, "order"), "after your products");
 });

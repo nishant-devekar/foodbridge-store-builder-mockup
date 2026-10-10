@@ -58,7 +58,10 @@
   }
 
   function lockNote(s, id) {
-    if (id === "order") return "after items and customers";
+    if (id === "order") {   // only what is still missing (addendum-025)
+      var a = !isDone(s, "items"), b = !isDone(s, "customers");
+      return a && b ? "after products and customers" : a ? "after your products" : "after your customers";
+    }
     if (id === "deliver" || id === "paid") return "after your first order";
     return "";
   }
