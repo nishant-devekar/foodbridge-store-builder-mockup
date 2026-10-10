@@ -1,0 +1,42 @@
+{
+  "_note": "Invented but representative data for the Store Activation discovery. Every name and number is an example. Canonical file: seed.js mirrors it for file:// use (tests/engine.test.js checks they match).",
+  "store": { "name": "Ramesh Traders", "owner": "Ramesh", "city": "Pune", "phone": "+91 98••• ••210" },
+  "rateList": {
+    "fileName": "Rate list Oct.pdf",
+    "items": [
+      { "id": "i01", "name": "Glucose biscuit 100g", "unit": "carton", "price": 480 },
+      { "id": "i02", "name": "Chakki atta 10 kg", "unit": "bag", "price": null },
+      { "id": "i03", "name": "Sunflower oil 1 L", "unit": "peti of 12", "price": 1860 },
+      { "id": "i04", "name": "Masala noodles 70g", "unit": "carton of 96", "price": 1020 },
+      { "id": "i05", "name": "Marie biscuit 200g", "unit": "carton of 36", "price": 540 },
+      { "id": "i06", "name": "Toor dal 1 kg", "unit": "bag of 30", "price": 3720 },
+      { "id": "i07", "name": "Sugar 1 kg", "unit": "bag of 30", "price": 1290 },
+      { "id": "i08", "name": "Tea 250g", "unit": "carton of 40", "price": 4400 },
+      { "id": "i09", "name": "Salt 1 kg", "unit": "bag of 25", "price": 520 },
+      { "id": "i10", "name": "Rusk 300g", "unit": "carton of 30", "price": 1350 },
+      { "id": "i11", "name": "Detergent 1 kg", "unit": "carton of 20", "price": 1960 },
+      { "id": "i12", "name": "Bath soap 100g", "unit": "carton of 72", "price": 2160 },
+      { "id": "i13", "name": "Glucose bisc. 100 gm", "unit": "carton", "price": 480, "duplicateOf": "i01" }
+    ],
+    "questions": [
+      { "id": "q1", "kind": "price", "itemId": "i02", "text": "The price on your rate list is smudged. Which is right?", "options": [410, 470] },
+      { "id": "q2", "kind": "duplicate", "itemId": "i13", "text": "\"Glucose bisc. 100 gm\" looks like \"Glucose biscuit 100g\". Same item?", "options": ["Same item", "Different"] }
+    ]
+  },
+  "commonItems": ["i01", "i03", "i04", "i05", "i07", "i09"],
+  "contacts": [
+    { "id": "c01", "name": "Sharma Kirana Store", "phone": "98220 •••••", "area": "Shivaji Nagar", "kind": "shop" },
+    { "id": "c02", "name": "Gupta Stores", "phone": "97300 •••••", "area": "Shivaji Nagar", "kind": "shop" },
+    { "id": "c03", "name": "Mahalaxmi Provision", "phone": "90110 •••••", "area": "Deccan", "kind": "shop" },
+    { "id": "c04", "name": "Patil General Stores", "phone": "88050 •••••", "area": "Warje", "kind": "shop" },
+    { "id": "c05", "name": "New Bharat Traders", "phone": "93250 •••••", "area": "Kothrud", "kind": "shop" },
+    { "id": "c06", "name": "Shree Sai Kirana", "phone": "70200 •••••", "area": "Kothrud", "kind": "shop" },
+    { "id": "c07", "name": "Om Provision Stores", "phone": "98500 •••••", "area": "Aundh", "kind": "shop" },
+    { "id": "c08", "name": "Balaji General Store", "phone": "77090 •••••", "area": "Baner", "kind": "shop" },
+    { "id": "c09", "name": "Sai Traders", "phone": "98900 •••••", "area": "Market Yard", "kind": "supplier" },
+    { "id": "c10", "name": "Raju (driver)", "phone": "97300 ••118", "area": "", "kind": "driver" },
+    { "id": "c11", "name": "Sunita", "phone": "99220 •••••", "area": "", "kind": "person" },
+    { "id": "c12", "name": "Amit Bhai", "phone": "98600 •••••", "area": "", "kind": "person" }
+  ],
+  "readMillis": 6000
+}

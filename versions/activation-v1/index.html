@@ -1,0 +1,105 @@
+<!doctype html>
+<!--
+  DISCOVERY WIRING — Store Activation
+  ---------------------------------------------------------
+  This file is the WIRING only — the hub + transition map. It holds NO screen
+  content; screens live in screens/. The transition map below is the proto-FSM
+  that SSOT-1 (state-machine) and SSOT-5 (workflow) are later derived from.
+  Rules:
+  - HTML/CSS/vanilla JS only. No frameworks, no build step, no real API calls.
+  - Screens are standalone-openable and link to each other; this hub is the entry.
+  - Use seed-data/seed.json for any data (seed.js mirrors it for file://).
+  - Disposable. When a version is accepted, snapshot the whole folder
+    (screens/ + index.html + seed-data) into versions/vN/.
+  - Nothing here is imported by development/. It only informs the SSOTs.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store Activation — Discovery (wiring)</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem 1rem; max-width: 760px; margin-inline: auto; line-height: 1.5; }
+    h1 { font-size: 1.25rem; }
+    h2 { font-size: 1rem; margin-top: 1.75rem; }
+    .note { color: #666; font-size: 0.85rem; }
+    a { color: #15803d; }
+    .start { display: inline-block; margin: .5rem 0; padding: .6rem 1rem; border-radius: 10px; background: #16a34a; color: #fff; text-decoration: none; font-weight: 600; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+    th, td { border: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+    .scroll { overflow-x: auto; }
+    ul { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>Store Activation — Discovery Prototype v1 (wiring hub)</h1>
+  <p class="note">Iteration goal: can a new owner who has never seen FoodBridge get from the store link to running their
+  business (items, customers, first order, delivery, payment, daily plan) on one page, with the floating assistant only
+  pointing the way? Everything works end to end in this browser; progress is kept in localStorage.</p>
+
+  <p><a class="start" href="screens/activation.html#reset">▶ Start fresh (the store link on WhatsApp)</a></p>
+  <p><a href="screens/activation.html#home">Continue where you left off</a></p>
+
+  <h2>Screens</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Route</th><th>Screen</th><th>Where it lives</th></tr></thead>
+    <tbody>
+      <tr><td><a href="screens/activation.html#wa-link">#wa-link</a></td><td>The store link</td><td>Owner's WhatsApp</td></tr>
+      <tr><td><a href="screens/activation.html#home">#home</a></td><td>Getting started: the next step, the rest quietly</td><td>Platform (the activation page)</td></tr>
+      <tr><td><a href="screens/activation.html#items">#items</a></td><td>Step 1: add your rate list (other ways in a sheet)</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#reading">#reading</a></td><td>Reading the rate list</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#check">#check</a></td><td>Quick check, one question at a time</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#customers">#customers</a></td><td>Step 2: customers from phone contacts</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#order">#order</a></td><td>Step 3: first order</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#placed">#placed</a></td><td>Order placed</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#deliver">#deliver</a></td><td>Step 4: deliver it</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#paid">#paid</a></td><td>Step 5: get paid</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#plan">#plan</a></td><td>Step 6: daily plan on WhatsApp</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#done">#done</a></td><td>All set</td><td>Activation page</td></tr>
+      <tr><td><a href="screens/activation.html#dashboard">#dashboard</a></td><td>The platform's dashboard: avatar ring, profile menu, Getting started card, floating assistant</td><td>Platform</td></tr>
+      <tr><td><a href="screens/activation.html#wa-nudge">#wa-nudge</a></td><td>A morning nudge (links to the page, never into a step)</td><td>Owner's WhatsApp</td></tr>
+      <tr><td><a href="screens/activation.html#wa-customer">#wa-customer</a></td><td>What the customer gets: invoice, payment link, Pay</td><td>Customer's WhatsApp</td></tr>
+      <tr><td><a href="screens/activation.html#driver">#driver</a></td><td>The driver's link: Delivered</td><td>Driver's phone (a link, no app)</td></tr>
+      <tr><td><a href="screens/activation.html#wa-letgo">#wa-letgo</a></td><td>Letting a quiet store go</td><td>Owner's WhatsApp</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The floating assistant (bottom-right) is on Getting started, All set and the dashboard. Tap it and ask
+  "how do I deliver?": it answers with a pointer to the page and never runs a step.</p>
+
+  <h2>Discovery aids</h2>
+  <ul>
+    <li><a href="screens/activation.html#finish-reading">Finish reading the rate list now</a> (reading takes 6 seconds otherwise)</li>
+    <li><a href="screens/activation.html#team-done">The team finished adding items</a> (after "Let our team do it")</li>
+    <li><a href="screens/activation.html#reset">Start over</a> (clears this browser's progress)</li>
+  </ul>
+  <p class="note">An uploaded file or photo is not read: the seed's rate list stands in for whatever is chosen. No message
+  is sent anywhere; WhatsApp screens show what each person would see.</p>
+
+  <h2>Transition map (→ SSOT-1 state-machine / SSOT-5 workflow)</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>From screen / state</th><th>Event</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>#wa-link</td><td>Open my store</td><td>#home (0 of 6)</td></tr>
+      <tr><td>#home</td><td>Next step's button (always the first open, unlocked, not-waiting step)</td><td>that step's screen</td></tr>
+      <tr><td>#items</td><td>Choose file / Take a photo</td><td>#reading · items = reading</td></tr>
+      <tr><td>#items (sheet)</td><td>Pick from common items</td><td>#home · items = done (6)</td></tr>
+      <tr><td>#items (sheet)</td><td>Let our team do it</td><td>#home · items = team (waiting)</td></tr>
+      <tr><td>items = reading</td><td>6 s pass</td><td>items = check · #home suggests "Check 2 items"</td></tr>
+      <tr><td>#reading</td><td>Add customers while it reads</td><td>#customers</td></tr>
+      <tr><td>#check</td><td>Answer (or "ask me later"), last question</td><td>#home · items = done</td></tr>
+      <tr><td>#customers</td><td>Add n customers</td><td>#home · customers = done</td></tr>
+      <tr><td>#order (unlocks after items + customers)</td><td>Place order</td><td>#placed · order made; paid at once if cash/UPI</td></tr>
+      <tr><td>#placed</td><td>Next: deliver it</td><td>#deliver</td></tr>
+      <tr><td>#deliver</td><td>Send to driver / Mark it delivered</td><td>#home · delivery = sent / delivered</td></tr>
+      <tr><td>#driver</td><td>Delivered</td><td>delivery = delivered; owner sees it on #home</td></tr>
+      <tr><td>#paid</td><td>Send payment link / They paid cash</td><td>#home · payment = link / cash</td></tr>
+      <tr><td>#wa-customer</td><td>Pay by UPI</td><td>payment received; owner sees it on #home</td></tr>
+      <tr><td>#plan</td><td>Turn it on</td><td>#done if 6 of 6, else #home</td></tr>
+      <tr><td>Any page</td><td>Assistant → Open Getting started</td><td>#home (the assistant never runs a step)</td></tr>
+      <tr><td>Any step</td><td>✕</td><td>#home</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Data for every screen comes from <a href="seed-data/seed.json">seed-data/seed.json</a>. Rules: <code>screens/activation/engine.js</code>, tested by <code>tests/engine.test.js</code> (<code>node --test tests/engine.test.js</code>).</p>
+</body>
+</html>

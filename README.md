@@ -8,6 +8,7 @@ Joined (both versions side by side, a build arriving as a New ticket through Sto
 
 | Version | Live | What |
 | --- | --- | --- |
+| `activation-v1` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/activation-v1/screens/activation.html#reset> | **Store Activation, for the owner's review** (10 Oct 2026): the owner's Getting started page — six steps to a running store (items, customers, first order, deliver, get paid, daily plan on WhatsApp) — and the floating FoodBridge assistant that only points to it. From `exagon-ai/foodbridge-module-digital-assistant` → `modules/store-activation/discovery/versions/activation-v1/` |
 | `assistant-v8` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/assistant-v8/screens/chat.html> | **for the owner's review** (5 Oct 2026): v7 + a comment on every question, typed or spoken (🎤) — never a forced choice; the team reads them in the Excel's *Comments* sheet |
 | `assistant-v7` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/assistant-v7/screens/chat.html> | **what comes after v6** (5 Oct 2026): the account lookup and login links through the FoodBridge Digital Assistant (not connected yet: says so, a sample link); *Ready to use* (the *Demo · team* row stands in for the panel) switches on the store's options |
 | `assistant-v6` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/assistant-v6/screens/chat.html> | **for the owner's review** (5 Oct 2026): mobile then shop name, multi-select answers, "anything else?" after each section, every message one line, stops at the store request; *Give feedback* tagged `assistant-v6` |
@@ -21,6 +22,6 @@ Joined (both versions side by side, a build arriving as a New ticket through Sto
 | `ticketing-workspace-v1` | <https://nishant-devekar.github.io/foodbridge-store-builder-mockup/versions/ticketing-workspace-v1/index.html> | superseded by v2: placeholder downloads |
 
 HTML/CSS/JS only, no server, no real API call, invented data. Each version folder is a byte-for-byte copy of
-`exagon-ai/foodbridge-module-store-builder` → `modules/<submodule>/discovery/versions/<version>/` and is
-immutable; see each folder's `README.md`. The links in those READMEs to `../../instructions/…` point into the
+`exagon-ai/foodbridge-module-store-builder` → `modules/<submodule>/discovery/versions/<version>/` (`activation-v1`:
+`exagon-ai/foodbridge-module-digital-assistant` → `modules/store-activation/…`) and is immutable; see each folder's `README.md`. The links in those READMEs to `../../instructions/…` point into the
 source repo.
